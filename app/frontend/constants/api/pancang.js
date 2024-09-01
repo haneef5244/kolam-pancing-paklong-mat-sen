@@ -1,0 +1,1 @@
+export const GET_BOOKED_PANCANG = '/api/pancang/booked'

@@ -1,0 +1,4 @@
+export const BOOKING_SAVE = '/api/booking/save'
+export const BOOKING_CREATE = '/api/booking/create'
+export const BOOKING_QUEUE = '/api/booking/queue'
+export const BOOKING_STATUS = '/api/booking/status'
