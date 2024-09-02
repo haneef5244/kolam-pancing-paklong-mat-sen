@@ -23,8 +23,7 @@ enum Payment_Status {
 }
 
 enum Add_Ons {
-  CACING
-  MINYAK
+  AIR_MINERAL
 }
 
 model kolam {
@@ -32,6 +31,9 @@ model kolam {
   label           Int   @db.Integer
   jumlah_pancang  Int   @db.Integer
   kolam_bookings  kolam_booking[]
+  pancangs        pancang[]
+  booking_availabilities      booking_availability[]
+
 }
 
 model tarikh_memancing {
@@ -87,7 +89,7 @@ model kolam_booking {
 
 model kolam_booking_pancang {
   id                  Int @id @default(autoincrement())
-  nombor              Int
+  nombor              String? @db.Text
   kolam_booking       kolam_booking @relation(fields: [kolam_booking_id], references:[id])
   kolam_booking_id    Int
   created_on          DateTime  @default(now())
@@ -113,4 +115,25 @@ model kolam_booking_payments {
   kolam_booking               kolam_booking @relation(fields: [kolam_booking_id], references:[id])
   kolam_booking_id            Int           @unique
   transaction_time            DateTime?
+}
+
+model pancang {
+  id                          Int            @id @unique @default(autoincrement()) 
+  value                       String         @db.Text
+  kolam                       kolam          @relation(fields: [kolam_id], references:[id])
+  kolam_id                    Int            
+  is_left                     Boolean?       @default(false)
+  is_right                    Boolean?       @default(false)
+  booking_availabilities      booking_availability[]
+}
+
+model booking_availability {
+  id                          Int            @id @default(autoincrement()) 
+  kolam                       kolam          @relation(fields: [kolam_id], references:[id])
+  kolam_id                    Int           
+  tarikh                      DateTime?
+  pancang                     pancang        @relation(fields: [pancang_id], references:[id])
+  pancang_id                  Int         
+  is_available                Boolean        @default(true)   
+  @@unique([pancang_id, kolam_id, tarikh])
 }

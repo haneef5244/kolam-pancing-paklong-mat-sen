@@ -9,18 +9,16 @@ const Booking = async (props) => {
 
     const { id } = params;
 
-    const { data, token } = await getData(id);
+    const { data } = await getData(id);
 
-    return <BookingComponent data={data} token={token} bookingId={id} />
+    return <BookingComponent data={data} bookingId={id} />
 }
 
 const getData = async (id) => {
     const userToken = cookies().get('token')?.value;
 
-    const token = await getPubSubToken('bookingNotification', Number(id))
     const data = await getBooking(Number(id))
     return {
-        token,
         data
     }
 }

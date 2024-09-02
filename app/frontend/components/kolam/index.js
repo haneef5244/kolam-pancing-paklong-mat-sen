@@ -23,7 +23,7 @@ const KolamComponent = (props) => {
     const theme = useTheme();
     const isXs = useMediaQuery(theme.breakpoints.only('xs'), { noSsr: true });
 
-    const { kolamId, leftStart, leftEnd, rightStart, rightEnd, tarikh } = props;
+    const { kolamId, left, right, leftEnd, rightStart, rightEnd, tarikh } = props;
 
     const [loadKolam, setLoadKolam] = useState(true);
 
@@ -33,19 +33,12 @@ const KolamComponent = (props) => {
     const [loadingButton, setLoadingButton] = useState(false);
     const [additionalProducts, setAdditionalProducts] = useState([
         {
-            name: 'Minyak',
-            priceLabel: 'RM 12',
-            price: 12,
+            name: 'Air Mineral',
+            priceLabel: 'RM 2',
+            price: 2,
             quantity: 0,
-            image: '/images/oil.webp'
+            image: '/images/mineral-water.jpeg'
         },
-        {
-            name: 'Umpan',
-            priceLabel: 'RM 13',
-            price: 13,
-            quantity: 0,
-            image: '/images/umpan.jpeg'
-        }
     ])
     const [reservedPancangs, setReservedPancangs] = useState({});
 
@@ -96,17 +89,17 @@ const KolamComponent = (props) => {
 
 
 
-    const renderButtons = (start, total, right) => {
+    const renderButtons = (buttons, right) => {
         let maps = []
 
-        for (let i = start; i <= total; i++) {
+        for (let i = 0; i < buttons.length; i++) {
             maps.push(
                 <Grid item xs={12} width={'100%'}>
                     <Button
-                        key={i}
-                        disabled={reservedPancangs[i]}
-                        className={`pond-button ${bookedSlots.includes(i) ? 'booked' : reservedPancangs[i] ? 'not-available' : 'available'}`}
-                        onClick={() => handleBookSlot(Number(i))}
+                        key={buttons[i]?.pancang?.value}
+                        disabled={!buttons[i]?.is_available}
+                        className={`pond-button ${bookedSlots.includes(buttons[i]?.pancang?.value) ? 'booked' : !buttons[i]?.is_available ? 'not-available' : 'available'}`}
+                        onClick={() => handleBookSlot(buttons[i]?.pancang?.value)}
                         sx={{
                             width: '64px', ':focus': {
                                 background: 'unset'
@@ -122,9 +115,23 @@ const KolamComponent = (props) => {
             )
         }
 
-
         return <Grid container>
-            {maps.map(e => e)}
+            {buttons.map((button, i) => <Grid item xs={12} width={'100%'}>
+                <Button
+                    key={button?.pancang?.value}
+                    disabled={!button?.is_available}
+                    className={`pond-button ${bookedSlots.includes(button?.pancang?.value) ? 'booked' : !button?.is_available ? 'not-available' : 'available'}`}
+                    onClick={() => handleBookSlot(button?.pancang?.value)}
+                    sx={{
+                        width: '64px',
+                        ':disabled': {
+                            color: grey[300]
+                        }
+                    }}
+                >
+                    {button?.pancang?.value}
+                </Button>
+            </Grid>)}
         </Grid>
     };
 
@@ -140,10 +147,8 @@ const KolamComponent = (props) => {
         setLoadingButton(true);
         const addOns = {}
         for (let ao of additionalProducts) {
-            if (ao?.name == 'Minyak' && ao?.quantity > 0) {
-                addOns.minyak = ao?.quantity
-            } else if (ao?.name == 'Umpan' && ao?.quantity > 0) {
-                addOns.cacing = ao?.quantity
+            if (ao?.name == 'Air Mineral' && ao?.quantity > 0) {
+                addOns.airMineral = ao?.quantity
             }
         }
         const resp = await create({
@@ -161,11 +166,12 @@ const KolamComponent = (props) => {
                 message: respJson?.error,
                 severity: 'error'
             })
+            setLoadingButton(false);
         } else {
             const { booking } = respJson;
             navigate.push(`/kolam/booking/${booking}`)
         }
-        setLoadingButton(false);
+
     }
 
     const handleClickAdditionalProducts = (valueToAdd, index) => {
@@ -279,7 +285,7 @@ const KolamComponent = (props) => {
                         >
                             <div style={{ display: 'flex', columnGap: 4 }}>
                                 <div style={{ width: '64px' }}>
-                                    {renderButtons(leftStart, leftEnd)}
+                                    {renderButtons(left)}
                                 </div>
                                 <div style={{ position: 'relative', width: '-webkit-fill-available' }}>
 
@@ -307,7 +313,7 @@ const KolamComponent = (props) => {
                                     </div>
                                 </div>
                                 <div style={{ width: '64px', alignItems: 'end' }}>
-                                    {renderButtons(rightStart, rightEnd, true)}
+                                    {renderButtons(right, true)}
                                 </div>
                             </div>
                         </Grid>
@@ -407,6 +413,7 @@ const KolamComponent = (props) => {
                                                         sx={{
                                                             padding: '10px 20px',
                                                             borderRadius: '10px',
+                                                            background: cyan[800]
                                                         }}
                                                     >
                                                         <Typography fontWeight={'bold'} textTransform={'capitalize'}>Seterusnya</Typography>

@@ -29,29 +29,29 @@ const PaymentComponent = (props) => {
 
 
     const generatePaymentCard = () => {
-        return <Grid container>
+        return <Grid container rowSpacing={2} pt={5}>
             <Grid item xs={12}>
-                <Typography fontWeight={'bold'} fontSize={24}>
+                <Typography fontWeight={'bold'} variant='h6'>
                     Ref No:
                 </Typography>
             </Grid>
             <Grid item xs={12}>
-                <Typography fontSize={21}>
+                <Typography>
                     {data?.payment?.ref_no}
                 </Typography>
             </Grid>
             <Grid item xs={12}>
-                <Typography fontWeight={'bold'} fontSize={24}>
+                <Typography fontWeight={'bold'} variant='h6'>
                     Transaction time:
                 </Typography>
             </Grid>
             <Grid item xs={12}>
-                <Typography fontSize={21}>
+                <Typography >
                     {moment(data?.payment?.transaction_time).add(8, 'hours').format('Do MMMM YYYY, h:mm:ss a')}
                 </Typography>
             </Grid>
             <Grid item xs={12} pt={1}>
-                <Typography fontWeight={'bold'} fontSize={25}>
+                <Typography fontWeight={'bold'} variant='h6'>
                     {data?.payment?.reason}
                 </Typography>
             </Grid>
@@ -73,7 +73,7 @@ const PaymentComponent = (props) => {
         } else if (data?.payment_status == 'CANCELLED') {
             return <Grid container columnSpacing={2} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Grid item xs="12" textAlign={'center'}>
-                    <img src='/images/payment_fail.png' style={{ width: 250, height: 250 }} />
+                    <img src='/images/payment_fail.png' style={{ width: 100, height: 100 }} />
                 </Grid>
                 <Grid item xs="12">
                     <Grid container>
@@ -95,7 +95,7 @@ const PaymentComponent = (props) => {
         } else if (data?.payment_status == 'PAID') {
             return <Grid container columnSpacing={2} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Grid item xs="12" textAlign={'center'}>
-                    <img src='/images/payment_success.png' style={{ width: 250, height: 250 }} />
+                    <img src='/images/payment_success.png' style={{ width: 100, height: 100 }} />
                 </Grid>
                 <Grid item xs="12">
                     <Grid container>

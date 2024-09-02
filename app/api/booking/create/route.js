@@ -37,70 +37,58 @@ export async function POST(req) {
 
 
         if (amount && kolam_id && pancang?.length && moment(tarikhPancing).isValid()) {
-            let pancangs = pancang.map(p => {
-                return {
-                    nombor: Number(p)
-                }
-            })
-            const createdBooking = await prisma.kolam_booking.findFirst({
+            const unavailableSlots = await prisma.booking_availability.findMany({
                 where: {
-                    kolam_id: kolam_id || null,
-                    pancangs: {
-                        some: {
-                            nombor: {
-                                in: pancang
-                            }
-                        }
-                    },
                     tarikh: tarikhPancing,
-                    payment_status: {
-                        in: ['PENDING', 'PAID']
-                    },
-                    is_deleted: false
+                    is_available: false,
+                    pancang: {
+                        'value': {
+                            in: pancang
+                        }
+                    }
                 },
                 select: {
-                    'id': true,
-                },
+                    'pancang': {
+                        select: {
+                            'value': true,
+                        }
+                    }
+                }
             })
-            if (createdBooking?.id) {
-                return NextResponse.json({ error: 'Maaf, pilihan pancang anda telah dibook oleh user lain.' }, { status: 500 })
+            if (unavailableSlots?.length) {
+                return NextResponse.json({ error: `Maaf, pancang ${unavailableSlots?.map(e => e?.pancang?.value).join(', ')} telah dipilih oleh pengguna lain.` }, { status: 500 })
             }
             const addOnsList = []
-            if (addOns?.minyak) {
+            if (addOns?.airMineral) {
                 addOnsList.push({
-                    type: 'MINYAK',
-                    quantity: addOns?.minyak
-                })
-            }
-            if (addOns?.cacing) {
-                addOnsList.push({
-                    type: 'CACING',
-                    quantity: addOns?.cacing
+                    type: 'AIR_MINERAL',
+                    quantity: addOns?.airMineral
                 })
             }
 
-
-            if (!createdBooking?.id) {
-                const resp = await prisma.kolam_booking.create({
-                    data: {
-                        kolam_id,
-                        pancangs: {
-                            create: pancangs
-                        },
-                        add_ons: {
-                            create: addOnsList
-                        },
-                        tarikh: tarikhPancing,
-                        user_id: user?.id,
-                        amount,
+            const resp = await prisma.kolam_booking.create({
+                data: {
+                    kolam_id,
+                    pancangs: {
+                        createMany: {
+                            data: pancang.map(e => ({
+                                nombor: e
+                            }))
+                        }
                     },
-                    select: {
-                        'id': true
-                    }
-                });
+                    add_ons: {
+                        create: addOnsList
+                    },
+                    tarikh: tarikhPancing,
+                    user_id: user?.id,
+                    amount,
+                },
+                select: {
+                    'id': true
+                }
+            });
 
-                return NextResponse.json({ message: 'Booking created successfully!', booking: resp?.id })
-            }
+            return NextResponse.json({ message: 'Booking created successfully!', booking: resp?.id })
         }
 
 

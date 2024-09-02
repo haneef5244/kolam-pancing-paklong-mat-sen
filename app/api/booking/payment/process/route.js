@@ -99,9 +99,9 @@ export async function POST(req) {
             if (booking?.add_ons?.length) {
                 for (let ao of booking?.add_ons) {
                     paymentInfo.push({
-                        item: ao?.type == 'MINYAK' ? 'Minyak' : 'Cacing',
+                        item: ao?.type == 'AIR_MINERAL' ? 'Air Mineral' : '',
                         bilangan: ao?.quantity,
-                        amaun: `RM ${ao?.type == 'MINYAK' ? 12 * ao?.quantity : 13 * ao?.quantity}`
+                        amaun: `RM ${ao?.type == 'AIR_MINERAL' ? 2 * ao?.quantity : 0}`
                     })
                 }
             }

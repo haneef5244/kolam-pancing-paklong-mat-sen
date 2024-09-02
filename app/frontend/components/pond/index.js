@@ -1,11 +1,11 @@
 import { Container, SvgIcon, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 
-const PondLayout = () => {
+const PondLayout = ({ tarikh }) => {
     const router = useRouter();
 
     const navigateToPond = (pondId) => {
-        router.push(`/kolam/${Number(pondId)}`);
+        router.push(`/kolam?kolam=${Number(pondId)}&tarikh=${encodeURIComponent(tarikh)}`);
     };
 
     const scaleSvgString = `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -36,7 +36,7 @@ const PondLayout = () => {
     </svg>`
 
     return (
-        <Container maxWidth="sm" sx={{ pb: 10 }}>
+        <Container maxWidth="sm" sx={{ pb: 0 }}>
             <Typography fontWeight={'bold'} sx={{ pb: 2 }}>Layout Kolam Pancing Paklong Mat Sen</Typography>
             <svg viewBox="0 0 1000 1800" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
                 {/* <!-- Main Gate --> */}
@@ -186,7 +186,7 @@ const PondLayout = () => {
                 <rect x="997" y="400" width="1" height="1400" fill="none" stroke="#000" stroke-width="1" />
 
                 <rect x="0" y="0" width="1" height="1800" fill="none" stroke="#000" stroke-width="1" />
-                <rect x="0" y="1800" width="1000" height="1" fill="none" stroke="#000" stroke-width="1" />
+                <rect x="0" y="1798" width="1000" height="1" fill="none" stroke="#000" stroke-width="1" />
 
             </svg>
         </Container>

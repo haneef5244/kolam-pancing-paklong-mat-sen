@@ -1,4 +1,4 @@
-import { BOOKING_CREATE, BOOKING_QUEUE, BOOKING_SAVE, BOOKING_STATUS } from "../constants/api/booking"
+import { BOOKING_AVAILABILITY, BOOKING_CREATE, BOOKING_QUEUE, BOOKING_SAVE, BOOKING_STATUS } from "../constants/api/booking"
 
 export const save = async (body) => {
     return fetch(BOOKING_SAVE, {
@@ -36,6 +36,15 @@ export const getBookingStatus = (bookingId, billCode) => {
     return fetch(`${BOOKING_STATUS}?bookingId=${bookingId}&billCode=${billCode}`)
         .then(resp => {
             return resp
+        }).catch(e => {
+            throw e;
+        })
+}
+
+export const getBookingDates = () => {
+    return fetch(`${BOOKING_AVAILABILITY}`)
+        .then(resp => {
+            return resp;
         }).catch(e => {
             throw e;
         })

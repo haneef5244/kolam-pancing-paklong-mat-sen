@@ -15,7 +15,7 @@ const AdditonalProducts = ({ swiper = [], handleClickAdditionalProducts = () => 
     return <Swiper
         modules={[Navigation, Pagination, Scrollbar, A11y]}
         spaceBetween={10}
-        slidesPerView={1.8}
+        slidesPerView={1}
 
         onSwiper={(swiper) => console.log(swiper)}
     >
@@ -24,7 +24,11 @@ const AdditonalProducts = ({ swiper = [], handleClickAdditionalProducts = () => 
             <Card sx={{ boxShadow: 'none' }}>
                 <CardMedia
                     component="img"
-                    height={200}
+                    sx={{
+                        height: '200px',
+                        width: '200px',
+                        objectFit: 'cover', // Ensures the image covers the area while maintaining aspect ratio                    
+                    }}
                     src={data.image}
                 />
                 <CardContent>

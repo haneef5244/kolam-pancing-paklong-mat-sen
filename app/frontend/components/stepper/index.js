@@ -44,7 +44,7 @@ const Stepper = ({ activeIndex }) => {
             circleStyle.borderTopLeft = `2px solid ${grey[200]}`
         }
         return <div className='circle'>
-            <CircularProgressbar value={((activeIndex + 1) / 4) * 100} text={`${activeIndex + 1} dari 4`} />
+            <CircularProgressbar value={((activeIndex + 1) / 4) * 100} text={`${activeIndex + 1} dari 5`} />
         </div>
 
     }
