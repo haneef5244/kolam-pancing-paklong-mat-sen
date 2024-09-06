@@ -1,55 +1,25 @@
 import { Avatar, CircularProgress, Divider, Grid, Typography } from '@mui/material';
 import React, { act } from 'react';
 import { stepperData } from '../../constants/stepper';
-import { blue, grey } from '@mui/material/colors';
+import { blue, green, grey } from '@mui/material/colors';
 import './index.css';
-import { CircularProgressbar } from 'react-circular-progressbar';
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 
 const Stepper = ({ activeIndex }) => {
 
     const generateCircle = () => {
-        let circleStyle = {}
-        circleStyle.borderTopRightRadius = '50%'
-        circleStyle.borderBottomRightRadius = '50%'
-        circleStyle.borderBottomLeftRadius = '50%'
-        circleStyle.borderTopLeftRadius = '50%'
-        if (activeIndex == 0) {
-            circleStyle.borderTopRight = '2px solid red'
-            circleStyle.borderBottomRight = `2px solid ${grey[200]}`
-            circleStyle.borderBottomLeft = `2px solid ${grey[200]}`
-            circleStyle.borderTopLeft = `2px solid ${grey[200]}`
-        }
-        if (activeIndex == 1) {
-            circleStyle.background = 'linear-gradient(45deg, red 50%, yellow 50%),linear - gradient(-45deg, green 50 %, blue 50 %)'
-            circleStyle.backgroundSize = '100% 100%'
-            circleStyle.position = '0 0, 0 100%'
-            circleStyle.backgroundRepeat = 'no-repeat'
-        }
-        if (activeIndex == 2) {
-            circleStyle.background = 'linear-gradient(45deg, red 50%, yellow 50%),linear - gradient(-45deg, green 50 %, blue 50 %)'
-            circleStyle.backgroundSize = '100% 100%'
-            circleStyle.position = '0 0, 0 100%'
-            circleStyle.backgroundRepeat = 'no-repeat'
-            circleStyle.borderTopRight = '2px solid red'
-            circleStyle.borderBottomRight = '2px solid red'
-            circleStyle.borderBottomLeft = '2px solid red'
-            circleStyle.borderTopLeft = `2px solid ${grey[200]}`
-        }
-        if (activeIndex == 3) {
-            circleStyle.background = 'linear-gradient(45deg, red 50%, yellow 50%),linear - gradient(-45deg, green 50 %, blue 50 %)'
-
-            circleStyle.borderBottomRight = '2px solid red'
-            circleStyle.borderBottomLeft = '2px solid red'
-            circleStyle.borderTopLeft = `2px solid ${grey[200]}`
-        }
         return <div className='circle'>
-            <CircularProgressbar value={((activeIndex + 1) / 4) * 100} text={`${activeIndex + 1} dari 5`} />
+            <Grid container>
+                <Grid item xs={12}>
+                    <CircularProgressbar styles={buildStyles({ trailColor: '#ffffff', textSize: 14, backgroundColor: 'red', pathColor: green[700], textColor: green[900] })} strokeWidth={20} value={((activeIndex + 1) / 5) * 100} text={`${activeIndex + 1} dari 5`} />
+                </Grid>
+            </Grid>
         </div>
 
     }
 
-    return <Grid container columnGap={2} marginBottom={2} padding={5} sx={{ background: grey[100], borderRadius: '10px' }}>
+    return <Grid container columnGap={2} marginBottom={2} padding={5} sx={{ background: grey[300], borderRadius: '10px' }}>
         {stepperData.map((step, i) => <Grid item xs sx={{ display: { xs: 'none', md: 'block' } }}>
             <Grid container display={'flex'} alignItems={'center'}>
                 <Grid item xs>
@@ -87,13 +57,20 @@ const Stepper = ({ activeIndex }) => {
                     {generateCircle()}
                 </Grid>
                 <Grid item xs>
-                    <Grid container>
+                    <Grid container rowSpacing={2}>
                         <Grid item xs={12}>
                             <Typography variant='65' fontWeight={'bold'}>{stepperData[activeIndex]?.label}</Typography>
-
                         </Grid>
                         {stepperData[activeIndex]?.seterusnya ? <Grid item xs={12}>
-                            <Typography variant='h7' fontWeight={'300'}>Seterusnya: {stepperData[activeIndex]?.seterusnya}</Typography>
+                            <Grid container>
+                                <Grid item xs={12}>
+                                    <Typography variant='h7' fontWeight={'300'}><span style={{ fontWeight: 'bold' }}>Seterusnya:</span></Typography>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Typography>{stepperData[activeIndex]?.seterusnya}</Typography>
+                                </Grid>
+                            </Grid>
+
                         </Grid> : <></>}
                     </Grid>
                 </Grid>

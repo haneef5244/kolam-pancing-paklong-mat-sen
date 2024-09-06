@@ -65,55 +65,62 @@ const UserBookingComponent = (props) => {
     }
 
     useEffect(() => {
-        if (props?.data) {
-            let newData = [];
-            for (let d of props?.data) {
-                let colData = []
-                colData.push({
-                    props: {},
-                    value: d?.id
-                })
-                colData.push({
-                    props: {},
-                    value: d?.kolam_id
-                })
-                colData.push({
-                    props: {},
-                    value: moment(d?.tarikh).format('Do MMMM YYYY')
-                })
-                colData.push({
-                    props: {},
-                    value: <Grid container columnSpacing={2} rowSpacing={2}>
-                        {d?.pancangs?.map(pancang => <Grid item xs="auto">
-                            <Chip label={pancang?.nombor} />
-                        </Grid>)}
-                    </Grid>
-                })
-                colData.push({
-                    props: {},
-                    value: <Grid container>
-                        {d?.add_ons.map(ao => <Grid item xs="12">
-                            {ao?.type} x {ao?.quantity}
-                        </Grid>)}
-                    </Grid>
-                })
-                colData.push({
-                    props: {},
-                    value: `RM ${d?.amount}`
-                })
-                colData.push({
-                    props: {},
-                    value: generatePaymentChip(d?.payment_status)
-                })
-                colData.push({
-                    props: {},
-                    value: moment(d?.created_on).format('Do MMMM YYYY, h:mm:ss a')
-                })
-                newData.push(colData);
+        fetch('/api/users/booking', {
+            method: 'GET'
+        }).then(async res => {
+            const message = await res.json();
+
+            if (message?.data) {
+                let newData = [];
+                for (let d of props?.data) {
+                    let colData = []
+                    colData.push({
+                        props: {},
+                        value: d?.id
+                    })
+                    colData.push({
+                        props: {},
+                        value: d?.kolam_id
+                    })
+                    colData.push({
+                        props: {},
+                        value: moment(d?.tarikh).format('Do MMMM YYYY')
+                    })
+                    colData.push({
+                        props: {},
+                        value: <Grid container columnSpacing={2} rowSpacing={2}>
+                            {d?.pancangs?.map(pancang => <Grid item xs="auto">
+                                <Chip label={pancang?.nombor} />
+                            </Grid>)}
+                        </Grid>
+                    })
+                    colData.push({
+                        props: {},
+                        value: <Grid container>
+                            {d?.add_ons.map(ao => <Grid item xs="12">
+                                {ao?.type?.replace('_', ' ')} x {ao?.quantity}
+                            </Grid>)}
+                        </Grid>
+                    })
+                    colData.push({
+                        props: {},
+                        value: `RM ${d?.amount}`
+                    })
+                    colData.push({
+                        props: {},
+                        value: generatePaymentChip(d?.payment_status)
+                    })
+                    colData.push({
+                        props: {},
+                        value: moment(d?.created_on).format('Do MMMM YYYY, h:mm:ss a')
+                    })
+                    newData.push(colData);
+                }
+                setData(newData);
             }
-            setData(newData);
-        }
-    }, [props?.data])
+        })
+
+    }, [])
 
     return <Container maxWidth={'lg'} sx={{ pt: 5, pb: 5 }}>
         <Grid container>

@@ -1,11 +1,25 @@
 'use client';
 import { Container, Grid, Typography } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import Stepper from '@/app/frontend/components/stepper';
 import PondLayout from '@/app/frontend/components/pond';
+import { useRouter } from "next/navigation";
 
 const KolamLayoutComponent = props => {
     const { tarikh } = props;
+    const navigate = useRouter();
+
+    useEffect(() => {
+        fetch(`/api/booking/availability/by-date?date=${tarikh}`)
+            .then(async res => {
+                debugger
+                const message = await res.json();
+                if (!message?.data?.tarikh) {
+                    navigate.push('/')
+                }
+            })
+    }, [])
+
     return <Container maxWidth="xl" sx={{ pt: 2, pb: 5, }}>
         <Grid container sx={{ pb: 2 }}>
             <Grid item xs={12}>

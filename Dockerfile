@@ -18,7 +18,6 @@ RUN \
 # Copy environment files and prisma directory
 COPY .env* ./
 COPY prisma ./prisma/
-COPY .well-known ./.well-known
 
 # Rebuild the source code only when needed
 FROM base AS builder

@@ -15,6 +15,7 @@ import { useRouter } from 'next/navigation';
 import { getBookedPancang } from '../../services/pancang';
 import { FixedSizeList as List } from 'react-window';
 import { LoadingButton } from '@mui/lab';
+import moment from 'moment';
 
 
 const KolamComponent = (props) => {
@@ -23,9 +24,11 @@ const KolamComponent = (props) => {
     const theme = useTheme();
     const isXs = useMediaQuery(theme.breakpoints.only('xs'), { noSsr: true });
 
-    const { kolamId, left, right, leftEnd, rightStart, rightEnd, tarikh } = props;
+    const { kolamId, tarikh } = props;
 
     const [loadKolam, setLoadKolam] = useState(true);
+    const [left, setLeft] = useState([]);
+    const [right, setRight] = useState([]);
 
     const [bookedSlots, setBookedSlots] = useState([]);
     const [total, setTotal] = useState(0);
@@ -43,11 +46,44 @@ const KolamComponent = (props) => {
     const [reservedPancangs, setReservedPancangs] = useState({});
 
     useEffect(() => {
-        getBookedPancang(kolamId, tarikh).then(async res => {
-            const jsonResp = await res.json();
-            setReservedPancangs(jsonResp?.data);
-            setLoadKolam(false);
-        })
+        if (moment(tarikh).startOf('day').isSameOrAfter(moment().startOf('day'))
+            && moment(tarikh).isValid()
+            && kolamId) {
+            fetch(`/api/booking/availability/by-date-and-kolam?date=${tarikh}&kolam=${Number(kolamId)}`)
+                .then(async res => {
+                    const message = await res.json();
+                    if (!message?.data?.length) {
+                        return redirect('/', 'push')
+                    }
+
+                    const leftItems = message?.data?.filter(e => e?.pancang?.is_left)?.sort((a, b) => {
+                        // Extract and convert the numeric parts of the pancang.value properties
+                        const numA = parseInt(a.pancang.value.slice(1), 10);
+                        const numB = parseInt(b.pancang.value.slice(1), 10);
+
+                        // Compare the numeric values
+                        return numA - numB;
+                    });
+                    const rightItems = message?.data?.filter(e => e?.pancang?.is_right)?.sort((a, b) => {
+                        // Extract and convert the numeric parts of the pancang.value properties
+                        const numA = parseInt(a.pancang.value.slice(1), 10);
+                        const numB = parseInt(b.pancang.value.slice(1), 10);
+
+                        // Compare the numeric values
+                        return numA - numB;
+                    });
+                    setLeft(leftItems)
+                    setRight(rightItems)
+                })
+        } else {
+            navigate.push('/')
+        }
+
+        // getBookedPancang(kolamId, tarikh).then(async res => {
+        //     const jsonResp = await res.json();
+        //     setReservedPancangs(jsonResp?.data);
+        //     setLoadKolam(false);
+        // })
     }, [])
     const handleBookSlot = (slotId) => {
         if (reservedPancangs[slotId]) {
@@ -62,34 +98,7 @@ const KolamComponent = (props) => {
         }
     };
 
-    // Generate buttons dynamically
-    // const renderButtons = (start, total, right) => {
-    //     let buttons = [];
-    //     for (let i = start; i < start + total; i++) {
-    //         buttons.push(
-    //             <Grid item xs={12} width={'100%'} sx={{ display: 'flex', justifyContent: right ? 'end' : 'start' }}>
-    //                 <Button
-    //                     key={i}
-    //                     disabled={reservedPancangs[i]}
-    //                     className={`pond-button ${bookedSlots.includes(i) ? 'booked' : reservedPancangs[i] ? 'not-available' : 'available'}`}
-    //                     onClick={() => handleBookSlot(Number(i))}
-    //                     sx={{
-    //                         width: '64px', ':focus': {
-    //                             background: 'unset'
-    //                         }
-    //                     }}
-    //                 >
-    //                     {i}
-    //                 </Button>
-    //             </Grid>
-    //         );
-    //     }
-    //     return <Grid container sx={{ verticalAlign: 'space-between' }} width={'100%'} alignContent={'end'} rowSpacing={1}>{buttons.map(e => e)}</Grid>;
-    // };
-
-
-
-    const renderButtons = (buttons, right) => {
+    const renderButtons = (buttons) => {
         let maps = []
 
         for (let i = 0; i < buttons.length; i++) {
@@ -213,7 +222,7 @@ const KolamComponent = (props) => {
 
             <Grid container>
                 <Grid item xs={12}>
-                    <Stepper activeIndex={1} />
+                    <Stepper activeIndex={2} />
                 </Grid>
                 <Grid item xs={12}>
                     <Typography variant='h6'>
@@ -413,7 +422,10 @@ const KolamComponent = (props) => {
                                                         sx={{
                                                             padding: '10px 20px',
                                                             borderRadius: '10px',
-                                                            background: cyan[800]
+                                                            background: cyan[800],
+                                                            ':hover': {
+                                                                background: cyan[700]
+                                                            }
                                                         }}
                                                     >
                                                         <Typography fontWeight={'bold'} textTransform={'capitalize'}>Seterusnya</Typography>

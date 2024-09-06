@@ -13,14 +13,8 @@ const Payment = async (props) => {
 
     const { searchParams } = props;
     const { billcode } = searchParams
-    const data = await getData(id, billcode);
 
-    return <PaymentComponent bookingId={id} billCode={billcode} data={data} />
-}
-
-const getData = async (bookingId, billCode) => {
-    const data = await getVerifiedPayment(bookingId, billCode);
-    return data;
+    return <PaymentComponent bookingId={id} billCode={billcode} />
 }
 
 export default Payment

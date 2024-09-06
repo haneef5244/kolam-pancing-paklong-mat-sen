@@ -1,6 +1,12 @@
 import prisma from "@/app/backend/helpers/prisma";
 import { decode } from "jsonwebtoken";
 import { cookies } from "next/headers"
+import { NextResponse } from "next/server";
+
+export async function GET(req) {
+    const data = await getUserBookings();
+    return NextResponse.json({ data });
+}
 
 export const getUserBookings = async () => {
     const token = cookies().get('token');
@@ -42,7 +48,8 @@ export const getUserBookings = async () => {
                 select: {
                     'ref_no': true
                 }
-            }
+            },
+            'id': true,
         },
         orderBy: {
             'tarikh': 'desc'

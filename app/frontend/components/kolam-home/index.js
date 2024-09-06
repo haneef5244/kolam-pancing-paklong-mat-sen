@@ -25,10 +25,10 @@ export default function KolamHome() {
                     <Grid item xs={12}>
                         <Typography variant="h5" fontWeight={'bold'}>Selamat Datang!</Typography>
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} pt={2}>
                         <Typography variant="h6" fontWeight={'bold'}>Untuk mulakan proses tempahan, sila ikut langkah di bawah</Typography>
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} pt={2}>
                         <Stepper activeIndex={0} />
                     </Grid>
                     <Grid item xs={12}>

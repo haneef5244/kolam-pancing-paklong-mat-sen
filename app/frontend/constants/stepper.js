@@ -17,6 +17,7 @@ export const stepperData = [
         seterusnya: 'Memancing'
     },
     {
-        label: 'Memancing'
+        label: 'Memancing',
+        message: 'Selamat Memancing!'
     }
 ]

@@ -5,6 +5,7 @@ import { decode } from "jsonwebtoken";
 import moment from "moment";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import momenttz from 'moment-timezone';
 
 export async function POST(req) {
     try {
@@ -63,7 +64,8 @@ export async function POST(req) {
                     FOR UPDATE`;
 
                     if (bookingAvailabilityLock == booking?.pancangs?.length) {
-
+                        const malaysiaTime = momenttz.tz("Asia/Kuala_Lumpur");
+                        const expiryDate = malaysiaTime.add(15, 'minutes');
                         const toyyibPayResp = await fetch(`${process.env.TOYYIB_PAY_BASE_URL}${process.env.TOYYIB_PAY_CREATE_BILL_URL}`, {
                             method: 'POST',
                             headers: {
@@ -76,7 +78,7 @@ export async function POST(req) {
                                 'billPriceSetting': 1,
                                 'billAmount': Number(booking?.amount) * 100,
                                 'billPayorInfo': 0,
-                                'billExpiryDate': moment().add(15, 'minutes').format('DD-MM-YYYY HH:mm:ss'),
+                                'billExpiryDate': expiryDate.format('DD-MM-YYYY HH:mm:ss'),
                                 'billEmail': booking?.user?.email,
                                 'billPhone': booking?.user?.telefon,
                                 'billPaymentChannel': 2,

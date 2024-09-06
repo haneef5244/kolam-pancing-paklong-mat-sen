@@ -2,6 +2,8 @@ import prisma from "@/app/backend/helpers/prisma";
 import { decode } from "jsonwebtoken";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import jwt from 'jsonwebtoken';
+
 
 export async function GET(req) {
     const id = req.nextUrl.searchParams.get('id');
@@ -25,6 +27,12 @@ export async function getBooking(id) {
         const decodedToken = decode(token?.value);
 
         const userId = decodedToken?.id
+
+        //jwt.verify(token?.value, process.env.TOKEN_KEY)
+
+        if (!userId) {
+            return null;
+        }
 
         const resp = await prisma.kolam_booking.findFirst({
             where: {

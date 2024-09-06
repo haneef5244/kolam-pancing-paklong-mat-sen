@@ -4,8 +4,7 @@ const { default: UserBookingComponent } = require("@/app/frontend/components/use
 
 const UserBooking = async props => {
 
-    const data = await getUserBookings();
-    return <UserBookingComponent data={data} />
+    return <UserBookingComponent />
 }
 
 export default UserBooking

@@ -150,7 +150,7 @@ function ResponsiveAppBar() {
                                             </Grid>
                                             <Grid item xs={12}>
                                                 <List>
-                                                    <ListItem disablePadding dense sx={{ background: grey[100] }}>
+                                                    <ListItem disablePadding >
                                                         <ListItemButton onClick={() => handleClickLink('/home')}>
                                                             <ListItemIcon>
                                                                 <HomeOutlined />
@@ -158,8 +158,7 @@ function ResponsiveAppBar() {
                                                             <ListItemText primary={<Typography fontWeight={200}>Home</Typography>} />
                                                         </ListItemButton>
                                                     </ListItem>
-                                                    <Divider style={{ background: '#ffffff' }} />
-                                                    <ListItem disablePadding dense sx={{ background: grey[100] }}>
+                                                    <ListItem disablePadding >
                                                         <ListItemButton onClick={() => handleClickLink('/user/booking')}>
                                                             <ListItemIcon>
                                                                 <BookOutlined />
@@ -167,9 +166,8 @@ function ResponsiveAppBar() {
                                                             <ListItemText primary={<Typography fontWeight={200}>Booking</Typography>} />
                                                         </ListItemButton>
                                                     </ListItem>
-                                                    <Divider style={{ background: '#ffffff' }} />
 
-                                                    <ListItem disablePadding dense sx={{ background: grey[100] }}>
+                                                    <ListItem disablePadding >
                                                         <ListItemButton onClick={handleLogOut}>
                                                             <ListItemIcon>
                                                                 <Logout />

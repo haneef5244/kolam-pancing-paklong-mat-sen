@@ -22,31 +22,41 @@ export const BookingComponent = props => {
     const [openError, setOpenError] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
 
-    const { data, bookingId } = props;
-    if (!data) {
-        navigate.push('/')
-    }
+    const { bookingId } = props;
+
+    const [data, setData] = useState({});
+
 
     const [loadingButton, setLoadingButton] = useState(false);
 
     useEffect(() => {
-        const header = document.getElementById('header');
-        setHeaderHeight(header?.scrollHeight);
-        let totalCost = 0
-        for (let p of data?.pancangs) {
-            totalCost += 120
-        }
-        for (let ao of data?.add_ons) {
-            if (ao?.type == 'AIR_MINERAL') {
-                totalCost += 2 * ao?.quantity
-            }
-        }
-        setJumlah(totalCost)
+        fetch(`/api/booking?id=${bookingId}`).then(async res => {
+            const message = await res.json();
+            if (!message?.data) {
+                navigate.push('/');
+            } else {
+                const header = document.getElementById('header');
+                setHeaderHeight(header?.scrollHeight);
+                let totalCost = 0
+                for (let p of message?.data?.pancangs) {
+                    totalCost += 120
+                }
+                for (let ao of message?.data?.add_ons) {
+                    if (ao?.type == 'AIR_MINERAL') {
+                        totalCost += 2 * ao?.quantity
+                    }
+                }
+                setJumlah(totalCost)
 
-        const airMineralObj = data?.add_ons?.filter(e => e?.type == 'AIR_MINERAL');
-        if (airMineralObj?.length) {
-            setAirMineral(airMineralObj?.[0])
-        }
+                const airMineralObj = message?.data?.add_ons?.filter(e => e?.type == 'AIR_MINERAL');
+                if (airMineralObj?.length) {
+                    setAirMineral(airMineralObj?.[0])
+                }
+                setData(message.data);
+            }
+
+        })
+
     }, [])
 
     const handleProceedBooking = async () => {

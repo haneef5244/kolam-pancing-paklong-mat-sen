@@ -22,7 +22,10 @@ export const getBookingAvailability = async () => {
 export const getBookingAvailabilityByDate = async (date) => {
     return await prisma.booking_availability.findFirst({
         where: {
-            tarikh: date
+            tarikh: {
+                gte: moment(date).startOf('day').toDate(),
+                lte: moment(date).endOf('day').toDate(),
+            }
         },
         distinct: ['tarikh'],
         select: {

@@ -87,6 +87,14 @@ model kolam_booking {
   created_on                  DateTime @db.Timestamptz(6) @default(now())
 }
 
+model products { 
+  id                  Int @id @default(autoincrement())
+  name                String @db.Text
+  type                String @db.Text
+  price               Int
+  quantity            Int?
+}
+
 model kolam_booking_pancang {
   id                  Int @id @default(autoincrement())
   nombor              String? @db.Text
