@@ -72,7 +72,7 @@ const UserBookingComponent = (props) => {
 
             if (message?.data) {
                 let newData = [];
-                for (let d of props?.data) {
+                for (let d of message?.data) {
                     let colData = []
                     colData.push({
                         props: {},
