@@ -68,14 +68,14 @@ const PondLayout = ({ tarikh }) => {
                 <foreignObject x="655" y="480" width="50" height={"50"}>
                     <div dangerouslySetInnerHTML={{ __html: arrowBottomSvg }} />
                 </foreignObject>
-                <text x="670" y="600" font-family="Arial" font-size="30" fill="#000" transform='rotate(90, 670, 600)' text-anchor="middle">A0145</text>
+                <text x="670" y="600" font-family="Arial" font-size="30" fill="#000" transform='rotate(90, 670, 600)' text-anchor="middle">A0138</text>
 
                 {/* B0146 */}
-                <text x="310" y="410" font-family="Arial" font-size="30" fill="#000" transform='rotate(90, 310, 410)' text-anchor="middle">B0146</text>
+                <text x="310" y="410" font-family="Arial" font-size="30" fill="#000" transform='rotate(90, 310, 410)' text-anchor="middle">B0139</text>
                 <foreignObject x="295" y="480" width="50" height={"50"}>
                     <div dangerouslySetInnerHTML={{ __html: arrowBottomSvg }} />
                 </foreignObject>
-                <text x="310" y="600" font-family="Arial" font-size="30" fill="#000" transform='rotate(90, 310, 600)' text-anchor="middle">B0283</text>
+                <text x="310" y="600" font-family="Arial" font-size="30" fill="#000" transform='rotate(90, 310, 600)' text-anchor="middle">B0279</text>
 
                 {/* Scale */}
                 <foreignObject x="470" y="230" width="200" height={"100"}>
@@ -102,7 +102,7 @@ const PondLayout = ({ tarikh }) => {
                 </foreignObject>
                 <text x="20" y="1050" transform='rotate(90, 20, 1050)' font-family="Arial" font-size="30" fill="#000" text-anchor="middle">Penimbang</text>
 
-                <text x="110" y="1100" font-family="Arial" font-size="30" fill="#000" transform='rotate(90, 110, 1100)' text-anchor="middle">C0284</text>
+                <text x="110" y="1100" font-family="Arial" font-size="30" fill="#000" transform='rotate(90, 110, 1100)' text-anchor="middle">C0280</text>
                 <foreignObject x="95" y="1210" width="50" height={"50"}>
                     <div dangerouslySetInnerHTML={{ __html: arrowBottomSvg }} />
                 </foreignObject>
@@ -110,10 +110,10 @@ const PondLayout = ({ tarikh }) => {
                 <foreignObject x="45" y="1200" width="200" height={"100"}>
                     <div dangerouslySetInnerHTML={{ __html: scaleSvgString }} />
                 </foreignObject>
-                <text x="110" y="1380" font-family="Arial" font-size="30" fill="#000" transform='rotate(90, 110, 1380)' text-anchor="middle">C0595</text>
+                <text x="110" y="1380" font-family="Arial" font-size="30" fill="#000" transform='rotate(90, 110, 1380)' text-anchor="middle">C0591</text>
 
                 {/* D0596*/}
-                <text x="450" y="1100" font-family="Arial" font-size="30" fill="#000" transform='rotate(90, 450, 1100)' text-anchor="middle">D0596</text>
+                <text x="450" y="1100" font-family="Arial" font-size="30" fill="#000" transform='rotate(90, 450, 1100)' text-anchor="middle">D0592</text>
                 <foreignObject x="435" y="1210" width="50" height={"50"}>
                     <div dangerouslySetInnerHTML={{ __html: arrowBottomSvg }} />
                 </foreignObject>
@@ -121,7 +121,7 @@ const PondLayout = ({ tarikh }) => {
                 <foreignObject x="485" y="1200" width="200" height={"100"}>
                     <div dangerouslySetInnerHTML={{ __html: scaleSvgString }} />
                 </foreignObject>
-                <text x="450" y="1380" font-family="Arial" font-size="30" fill="#000" transform='rotate(90, 450, 1380)' text-anchor="middle">D0915</text>
+                <text x="450" y="1380" font-family="Arial" font-size="30" fill="#000" transform='rotate(90, 450, 1380)' text-anchor="middle">D0991</text>
                 {/* Scale */}
                 <foreignObject x="270" y="1560" width="200" height={"100"}>
                     <div dangerouslySetInnerHTML={{ __html: scaleSvgString }} />
@@ -140,15 +140,15 @@ const PondLayout = ({ tarikh }) => {
                 {/* F */}
                 <text x="850" y="880" font-family="Arial" font-size="30" fill="#000" font-weight="bold" text-anchor="middle">F</text>
                 {/* E0916*/}
-                <text x="550" y="1100" font-family="Arial" font-size="30" fill="#000" transform='rotate(90, 550, 1100)' text-anchor="middle">E0916</text>
+                <text x="550" y="1100" font-family="Arial" font-size="30" fill="#000" transform='rotate(90, 550, 1100)' text-anchor="middle">E0992</text>
                 <foreignObject x="535" y="1210" width="50" height={"50"}>
                     <div dangerouslySetInnerHTML={{ __html: arrowBottomSvg }} />
                 </foreignObject>
 
-                <text x="550" y="1380" font-family="Arial" font-size="30" fill="#000" transform='rotate(90, 550, 1380)' text-anchor="middle">E1230</text>
+                <text x="550" y="1380" font-family="Arial" font-size="30" fill="#000" transform='rotate(90, 550, 1380)' text-anchor="middle">E1231</text>
 
                 {/* F1231*/}
-                <text x="890" y="1100" font-family="Arial" font-size="30" fill="#000" transform='rotate(90, 890, 1100)' text-anchor="middle">F1231</text>
+                <text x="890" y="1100" font-family="Arial" font-size="30" fill="#000" transform='rotate(90, 890, 1100)' text-anchor="middle">F1232</text>
                 <foreignObject x="875" y="1210" width="50" height={"50"}>
                     <div dangerouslySetInnerHTML={{ __html: arrowBottomSvg }} />
                 </foreignObject>
@@ -156,7 +156,7 @@ const PondLayout = ({ tarikh }) => {
                 <foreignObject x="925" y="1200" width="200" height={"100"}>
                     <div dangerouslySetInnerHTML={{ __html: scaleSvgString }} />
                 </foreignObject>
-                <text x="890" y="1380" font-family="Arial" font-size="30" fill="#000" transform='rotate(90, 890, 1380)' text-anchor="middle">F1546</text>
+                <text x="890" y="1380" font-family="Arial" font-size="30" fill="#000" transform='rotate(90, 890, 1380)' text-anchor="middle">F1522</text>
                 {/* Scale */}
                 <foreignObject x="710" y="1560" width="200" height={"100"}>
                     <div dangerouslySetInnerHTML={{ __html: scaleSvgString }} />

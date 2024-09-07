@@ -5,6 +5,9 @@ export const getAvailabilityByKolamAndTarikh = async (kolamId, tarikh) => {
         where: {
             kolam_id: kolamId,
             tarikh: tarikh,
+            pancang: {
+                is_deleted: false
+            }
         },
         select: {
             'pancang': {

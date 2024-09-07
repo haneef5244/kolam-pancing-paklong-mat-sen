@@ -23,13 +23,13 @@ export const uploadBase64ImageToBlob = async (blobName, containerName, base64Ima
     console.log(`Upload successful: ${blobName}`);
 }
 
-export const getBlobSasUrl = (blobName, containerName, expiryDate) => {
+export const getBlobSasUrl = (blobName, containerName, expiryDate, account = process.env.AZURE_STORAGE_ACCOUNT_NAME, key = process.env.AZURE_STORAGE_ACCOUNT_KEY) => {
     // Create a shared key credential
-    const sharedKeyCredential = new StorageSharedKeyCredential(process.env.AZURE_STORAGE_ACCOUNT_NAME, process.env.AZURE_STORAGE_ACCOUNT_KEY);
+    const sharedKeyCredential = new StorageSharedKeyCredential(account, key);
 
     // Create a BlobServiceClient object
     const blobServiceClient = new BlobServiceClient(
-        `https://${process.env.AZURE_STORAGE_ACCOUNT_NAME}.blob.core.windows.net`,
+        `https://${account}.blob.core.windows.net`,
         sharedKeyCredential
     );
 
