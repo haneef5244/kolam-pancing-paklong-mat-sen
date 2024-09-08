@@ -51,3 +51,19 @@ export const getBlobSasUrl = (blobName, containerName, expiryDate, account = pro
     const sasUrl = `${containerUrl}?${sasToken}`;
     return sasUrl;
 }
+
+export const getBlobUrl = (blobName, containerName, expiryDate, account = process.env.AZURE_STORAGE_ACCOUNT_NAME, key = process.env.AZURE_STORAGE_ACCOUNT_KEY) => {
+
+    // Create a BlobServiceClient object
+    const blobServiceClient = new BlobServiceClient(
+        `https://${account}.blob.core.windows.net`,
+    );
+
+    // Parameters
+    const containerClient = blobServiceClient.getContainerClient(containerName);
+
+    // Construct the SAS URL
+    const containerUrl = containerClient.getBlobClient(blobName).url
+    const sasUrl = `${containerUrl}`;
+    return sasUrl;
+}

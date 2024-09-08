@@ -68,6 +68,7 @@ export async function POST(req) {
                         const expiryDate = malaysiaTime.add(15, 'minutes');
                         const toyyibPayResp = await fetch(`${process.env.TOYYIB_PAY_BASE_URL}${process.env.TOYYIB_PAY_CREATE_BILL_URL}`, {
                             method: 'POST',
+                            cache: 'no-store',
                             headers: {
                                 'Content-Type': 'application/x-www-form-urlencoded'
                             },

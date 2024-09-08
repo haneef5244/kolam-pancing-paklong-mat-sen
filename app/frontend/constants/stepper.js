@@ -1,6 +1,6 @@
 export const stepperData = [
     {
-        label: 'Pilih tarikh pancing',
+        label: 'Pilih Tarikh Pancing',
         seterusnya: 'Pilih Kolam',
     },
     {

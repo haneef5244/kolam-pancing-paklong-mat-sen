@@ -47,8 +47,8 @@ const PaymentComponent = (props) => {
                 </Typography>
             </Grid>
             <Grid item xs={12}>
-                <Typography >
-                    {moment(data?.payment?.transaction_time).add(8, 'hours').format('Do MMMM YYYY, h:mm:ss a')}
+                <Typography>
+                    {data?.payment?.transaction_time}
                 </Typography>
             </Grid>
             <Grid item xs={12} pt={1}>
@@ -60,18 +60,7 @@ const PaymentComponent = (props) => {
     }
 
     const generateContent = () => {
-        if (data?.payment_status == 'PENDING') {
-            return <Grid container display={'flex'} alignItems={'center'} justifyContent={'center'} textAlign={'center'}>
-                <Grid item xs={'12'}>
-                    <CircularProgress />
-                </Grid>
-                <Grid item xs={'12'}>
-                    <Typography variant="h5">
-                        Sila tunggu sebentar...
-                    </Typography>
-                </Grid>
-            </Grid>
-        } else if (data?.payment_status == 'CANCELLED') {
+        if (data?.payment_status == 'CANCELLED') {
             return <Grid container columnSpacing={2} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
 
                 <Grid item xs="12" textAlign={'center'}>
@@ -116,6 +105,17 @@ const PaymentComponent = (props) => {
                             <Typography variant='h6' fontWeight={'bold'}>Kami telah menghantar QR code anda kepada email anda. Sila pastikan anda bawa QR code tersebut pada hari memancing untuk pengesahan. Terima kasih!</Typography>
                         </Grid>
                     </Grid>
+                </Grid>
+            </Grid>
+        } else {
+            return <Grid container display={'flex'} alignItems={'center'} justifyContent={'center'} textAlign={'center'}>
+                <Grid item xs={'12'}>
+                    <CircularProgress />
+                </Grid>
+                <Grid item xs={'12'}>
+                    <Typography variant="h5">
+                        Sila tunggu sebentar...
+                    </Typography>
                 </Grid>
             </Grid>
         }

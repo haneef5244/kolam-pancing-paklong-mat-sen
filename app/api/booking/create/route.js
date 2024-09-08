@@ -56,7 +56,7 @@ export async function POST(req) {
                 }
             })
             if (unavailableSlots?.length) {
-                return NextResponse.json({ error: `Maaf, pancang ${unavailableSlots?.map(e => e?.pancang?.value).join(', ')} telah dipilih oleh pengguna lain.` }, { status: 500 })
+                return NextResponse.json({ error: `Maaf, pancang ${unavailableSlots?.map(e => e?.pancang?.value).join(', ')} telah dipilih oleh pengguna lain.`, unavailableSlots: unavailableSlots?.map(e => e?.pancang?.value) }, { status: 500 })
             }
             const addOnsList = []
             if (addOns?.airMineral) {

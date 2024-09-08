@@ -66,7 +66,8 @@ const UserBookingComponent = (props) => {
 
     useEffect(() => {
         fetch('/api/users/booking', {
-            method: 'GET'
+            method: 'GET',
+            cache: 'no-store'
         }).then(async res => {
             const message = await res.json();
 

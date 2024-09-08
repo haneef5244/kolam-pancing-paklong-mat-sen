@@ -87,21 +87,21 @@ export async function POST(req) {
 
             const qrCodeImage = await QRCode.toDataURL(encryptedData);
             await uploadBase64ImageToBlob(qrBlobName, 'payment-qr', qrCodeImage);
-            const sasUrl = getBlobSasUrl(qrBlobName, 'payment-qr', moment(booking?.tarikh).add(1, 'day').startOf('day'))
+            const sasUrl = getBlobSasUrl(qrBlobName, 'payment-qr', moment(booking?.tarikh).add(3, 'day').endOf('day'))
             let paymentInfo = []
 
             paymentInfo.push({
                 item: 'Pancang',
                 bilangan: booking?.pancangs?.length,
                 nota: booking?.pancangs?.map(p => `Pancang ${p?.nombor}`).join(','),
-                amaun: `RM ${booking?.pancangs?.length * 120}`
+                amaun: `RM ${booking?.pancangs?.length * 1}`
             })
             if (booking?.add_ons?.length) {
                 for (let ao of booking?.add_ons) {
                     paymentInfo.push({
                         item: ao?.type == 'AIR_MINERAL' ? 'Air Mineral' : '',
                         bilangan: ao?.quantity,
-                        amaun: `RM ${ao?.type == 'AIR_MINERAL' ? 2 * ao?.quantity : 0}`
+                        amaun: `RM ${ao?.type == 'AIR_MINERAL' ? 1 * ao?.quantity : 0}`
                     })
                 }
             }
@@ -122,6 +122,21 @@ export async function POST(req) {
                     type: 'booking-successful'
                 }
             })
+        } else if (body?.status == 3) {
+            await prisma.booking_availability.updateMany({
+                where: {
+                    pancang: {
+                        value: {
+                            in: booking?.pancangs?.map(e => e?.nombor)
+                        }
+                    },
+                    tarikh: new Date(booking?.tarikh),
+                    kolam_id: Number(booking?.kolam_id),
+                },
+                data: {
+                    is_available: true
+                }
+            });
         }
 
         return NextResponse.json({ message: 'Successful' });

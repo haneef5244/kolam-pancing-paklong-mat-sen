@@ -45,36 +45,42 @@ const KolamComponent = (props) => {
     ])
     const [reservedPancangs, setReservedPancangs] = useState({});
 
+    const refreshData = async () => {
+        fetch(`/api/booking/availability/by-date-and-kolam?date=${tarikh}&kolam=${Number(kolamId)}`, {
+            cache: 'no-store'
+        })
+            .then(async res => {
+                const message = await res.json();
+                if (!message?.data?.length) {
+                    return navigate.push('/')
+                }
+
+                const leftItems = message?.data?.filter(e => e?.pancang?.is_left)?.sort((a, b) => {
+                    // Extract and convert the numeric parts of the pancang.value properties
+                    const numA = parseInt(a.pancang.value.slice(1), 10);
+                    const numB = parseInt(b.pancang.value.slice(1), 10);
+
+                    // Compare the numeric values
+                    return numA - numB;
+                });
+                const rightItems = message?.data?.filter(e => e?.pancang?.is_right)?.sort((a, b) => {
+                    // Extract and convert the numeric parts of the pancang.value properties
+                    const numA = parseInt(a.pancang.value.slice(1), 10);
+                    const numB = parseInt(b.pancang.value.slice(1), 10);
+
+                    // Compare the numeric values
+                    return numA - numB;
+                });
+                setLeft(leftItems)
+                setRight(rightItems)
+            })
+    }
+
     useEffect(() => {
         if (moment(tarikh).startOf('day').isSameOrAfter(moment().startOf('day'))
             && moment(tarikh).isValid()
             && kolamId) {
-            fetch(`/api/booking/availability/by-date-and-kolam?date=${tarikh}&kolam=${Number(kolamId)}`)
-                .then(async res => {
-                    const message = await res.json();
-                    if (!message?.data?.length) {
-                        return redirect('/', 'push')
-                    }
-
-                    const leftItems = message?.data?.filter(e => e?.pancang?.is_left)?.sort((a, b) => {
-                        // Extract and convert the numeric parts of the pancang.value properties
-                        const numA = parseInt(a.pancang.value.slice(1), 10);
-                        const numB = parseInt(b.pancang.value.slice(1), 10);
-
-                        // Compare the numeric values
-                        return numA - numB;
-                    });
-                    const rightItems = message?.data?.filter(e => e?.pancang?.is_right)?.sort((a, b) => {
-                        // Extract and convert the numeric parts of the pancang.value properties
-                        const numA = parseInt(a.pancang.value.slice(1), 10);
-                        const numB = parseInt(b.pancang.value.slice(1), 10);
-
-                        // Compare the numeric values
-                        return numA - numB;
-                    });
-                    setLeft(leftItems)
-                    setRight(rightItems)
-                })
+            refreshData();
         } else {
             navigate.push('/')
         }
@@ -91,10 +97,10 @@ const KolamComponent = (props) => {
         }
         if (bookedSlots.includes(slotId)) {
             setBookedSlots(bookedSlots.filter(id => id !== slotId));
-            setTotal(total - 120)
+            setTotal(total - 90)
         } else {
             setBookedSlots([...bookedSlots, slotId]);
-            setTotal(total + 120)
+            setTotal(total + 90)
         }
     };
 
@@ -170,6 +176,10 @@ const KolamComponent = (props) => {
         const respJson = await resp.json();
 
         if (!resp.ok) {
+            if (respJson?.unavailableSlots) {
+                setBookedSlots(bookedSlots.filter(e => !respJson?.unavailableSlots.includes(e)));
+                await refreshData();
+            }
             setSnackbarProps({
                 open: true,
                 message: respJson?.error,
@@ -390,7 +400,7 @@ const KolamComponent = (props) => {
                                                         </Grid>
                                                         <Grid item xs={6} display={'flex'} justifyContent={'end'}>
                                                             <Typography fontWeight={'bold'}>
-                                                                RM {bookedSlots.length * 120}
+                                                                RM {bookedSlots.length * 90}
                                                             </Typography>
                                                         </Grid>
                                                     </Grid>

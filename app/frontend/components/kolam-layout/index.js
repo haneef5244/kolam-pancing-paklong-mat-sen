@@ -10,7 +10,9 @@ const KolamLayoutComponent = props => {
     const navigate = useRouter();
 
     useEffect(() => {
-        fetch(`/api/booking/availability/by-date?date=${tarikh}`)
+        fetch(`/api/booking/availability/by-date?date=${tarikh}`, {
+            cache: 'no-store'
+        })
             .then(async res => {
                 debugger
                 const message = await res.json();
