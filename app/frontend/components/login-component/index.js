@@ -58,6 +58,11 @@ export function LoginComponent() {
         return /[^a-zA-Z0-9 ]/.test(val);
     }
 
+    function validateEmail(email) {
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return emailPattern.test(email);
+    }
+
     const invalidUsername = val => {
         return /[^a-zA-Z0-9]/.test(val);
     }
@@ -71,10 +76,14 @@ export function LoginComponent() {
         } else if (invalidUsername(username)) {
             setUsernameErrorMessage('Hanya huruf atau nombor boleh digunakan')
             valid = false
+        } else {
+            setUsernameErrorMessage('');
         }
         if (!password) {
             setPasswordErrorMessage('Password perlu diisi')
             valid = false;
+        } else {
+            setPasswordErrorMessage('');
         }
         if (!namaPertama) {
             setNamaPertamaErrorMessage('Nama pertama perlu diisi')
@@ -82,6 +91,8 @@ export function LoginComponent() {
         } else if (invalidName(namaPertama)) {
             setNamaPertamaErrorMessage('Hanya huruf atau nombor boleh digunakan')
             valid = false;
+        } else {
+            setNamaPertamaErrorMessage('')
         }
         if (!namaTerakhir) {
             setNamaTerakhirErrorMessage('Nama terakhir perlu diisi')
@@ -89,14 +100,23 @@ export function LoginComponent() {
         } else if (invalidName(namaTerakhir)) {
             setNamaTerakhirErrorMessage('Hanya huruf atau nombor boleh digunakan')
             valid = false;
+        } else {
+            setNamaTerakhirErrorMessage('')
         }
         if (!telefon) {
             setTelefonErrorMessage('No. telefon perlu diisi')
             valid = false;
+        } else {
+            setTelefonErrorMessage('')
         }
         if (!email) {
             setEmailErrorMessage('Email perlu diisi')
             valid = false;
+        } else if (!validateEmail(email)) {
+            setEmailErrorMessage('Email tidak sah')
+            valid = false;
+        } else {
+            setEmailErrorMessage('')
         }
         if (!valid) {
             setLoadingRegister(false)
@@ -310,6 +330,7 @@ export function LoginComponent() {
                                 </InputAdornment>
                             }
                         />
+                        <FormHelperText sx={{ color: red[600] }}>{usernameErrorMessage}</FormHelperText>
                     </FormControl>
 
                 </Grid> : <></>}
@@ -368,6 +389,7 @@ export function LoginComponent() {
                                     </IconButton>
                                 </InputAdornment>
                             } />
+                        <FormHelperText sx={{ color: red[600] }}>{namaPertamaErrorMessage}</FormHelperText>
                     </FormControl>
                 </Grid> : <></>}
                 {isRegister ? <Grid item xs={12} sm={6}>
@@ -386,6 +408,7 @@ export function LoginComponent() {
                                     </IconButton>
                                 </InputAdornment>
                             } />
+                        <FormHelperText sx={{ color: red[600] }}>{namaTerakhirErrorMessage}</FormHelperText>
                     </FormControl>
 
                 </Grid> : <></>}
@@ -406,6 +429,7 @@ export function LoginComponent() {
                                     </IconButton>
                                 </InputAdornment>
                             } />
+                        <FormHelperText sx={{ color: red[600] }}>{telefonErrorMessage}</FormHelperText>
                     </FormControl>
                 </Grid> : <></>}
                 {isRegister || isForgotPassword ? <Grid item xs={12} sm={isForgotPassword ? 12 : 6}>
@@ -425,6 +449,7 @@ export function LoginComponent() {
                                     </IconButton>
                                 </InputAdornment>
                             } />
+                        <FormHelperText sx={{ color: red[600] }}>{emailErrorMessage}</FormHelperText>
                     </FormControl>
 
                 </Grid> : <></>}
