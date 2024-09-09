@@ -1,3 +1,5 @@
+export const revalidate = 1; // Revalidate every second
+
 import prisma from "@/app/backend/helpers/prisma";
 import moment from "moment";
 import { NextResponse } from "next/server";

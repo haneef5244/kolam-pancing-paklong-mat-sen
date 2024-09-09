@@ -130,7 +130,7 @@ const KolamComponent = (props) => {
             )
         }
 
-        return <Grid container>
+        return <Grid container flexDirection={'row'} alignItems={'space-between'} height={'100%'}>
             {buttons.map((button, i) => <Grid item xs={12} width={'100%'}>
                 <Button
                     key={button?.pancang?.value}

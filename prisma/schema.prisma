@@ -22,6 +22,11 @@ enum Payment_Status {
   PAID
 }
 
+enum Jenis_Pertandingan {
+  OPEN
+  RANK
+}
+
 enum Add_Ons {
   AIR_MINERAL
 }
@@ -76,13 +81,14 @@ model kolam_booking {
   add_ons                     kolam_booking_add_ons[]
   payment                     kolam_booking_payments?
   amount                      Decimal
-  user                        user  @relation(fields: [user_id], references:[id])
-  user_id                     Int
+  user                        user?  @relation(fields: [user_id], references:[id])
+  user_id                     Int?
   payment_status              Payment_Status @default(CREATED)
   is_deleted                  Boolean  @default(false)
   tarikh                      DateTime @db.Timestamp(6)
   qr_link_file_name           String?   @db.Text       
   is_checked_in               Boolean  @db.Boolean @default(false)
+  is_manual                   Boolean? @db.Boolean @default(false)
   check_in_on                 DateTime? @db.Timestamptz(6)             
   created_on                  DateTime @db.Timestamptz(6) @default(now())
 }
@@ -127,12 +133,14 @@ model kolam_booking_payments {
 
 model pancang {
   id                          Int            @id @unique @default(autoincrement()) 
-  value                       String         @db.Text
+  value                       String         @db.Text @unique
   kolam                       kolam          @relation(fields: [kolam_id], references:[id])
   kolam_id                    Int            
   is_left                     Boolean?       @default(false)
   is_right                    Boolean?       @default(false)
   booking_availabilities      booking_availability[]
+  pertandingan_audit_logs     pertandingan_audit_log[]
+  is_deleted                  Boolean        @default(false)
 }
 
 model booking_availability {
@@ -144,4 +152,24 @@ model booking_availability {
   pancang_id                  Int         
   is_available                Boolean        @default(true)   
   @@unique([pancang_id, kolam_id, tarikh])
+}
+
+model pertandingan {
+  id                          Int            @id @default(autoincrement()) 
+  tarikh                      DateTime?
+  jenis                       Jenis_Pertandingan?
+  poster_url                  String?
+  is_deleted                  Boolean        @default(false)
+  pertandingan_audit_logs     pertandingan_audit_log[]
+  @@unique([tarikh])
+}
+
+model pertandingan_audit_log {
+  id                          Int            @id @default(autoincrement()) 
+  pertandingan                pertandingan   @relation(fields: [pertandingan_id], references:[id])
+  pertandingan_id             Int
+  pancang                     pancang        @relation(fields: [pancang_value], references:[value])
+  pancang_value               String                         
+  berat                       Decimal        @db.Decimal(18,6)
+  is_deleted                  Boolean        @default(false)
 }

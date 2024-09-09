@@ -94,14 +94,14 @@ export async function POST(req) {
                 item: 'Pancang',
                 bilangan: booking?.pancangs?.length,
                 nota: booking?.pancangs?.map(p => `Pancang ${p?.nombor}`).join(','),
-                amaun: `RM ${booking?.pancangs?.length * 1}`
+                amaun: `RM ${booking?.pancangs?.length * 90}`
             })
             if (booking?.add_ons?.length) {
                 for (let ao of booking?.add_ons) {
                     paymentInfo.push({
                         item: ao?.type == 'AIR_MINERAL' ? 'Air Mineral' : '',
                         bilangan: ao?.quantity,
-                        amaun: `RM ${ao?.type == 'AIR_MINERAL' ? 1 * ao?.quantity : 0}`
+                        amaun: `RM ${ao?.type == 'AIR_MINERAL' ? 2 * ao?.quantity : 0}`
                     })
                 }
             }
