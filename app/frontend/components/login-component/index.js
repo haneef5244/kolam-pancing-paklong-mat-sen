@@ -473,6 +473,10 @@ export function LoginComponent() {
                             <Typography sx={{ fontWeight: '100' }}>Belum ada akaun? <span onClick={() => handleClickRegister()} style={{ fontWeight: 'bold', color: blue[700], cursor: 'pointer', textDecoration: 'underline' }}>Daftar sekarang</span></Typography>
 
                         </Grid> : <></>}
+                        {isLogin ? <Grid item xs={12} sx={{ cursor: 'pointer' }} textAlign={'center'}>
+                            <Typography sx={{ fontWeight: '100' }}><span onClick={() => navigate.push('/tapak')} style={{ fontWeight: 'bold', color: blue[700], cursor: 'pointer', textDecoration: 'underline' }}>Lihat tapak</span></Typography>
+
+                        </Grid> : <></>}
                         {isRegister ? <Grid item xs={12} onClick={() => handleSubmit(true)} sx={{ cursor: 'pointer' }}>
                             <LoadingButton size='large' loading={loadingRegister} variant='contained' fullWidth>
                                 <Typography sx={{ fontWeight: 'bold', textTransform: 'capitalize' }}>
