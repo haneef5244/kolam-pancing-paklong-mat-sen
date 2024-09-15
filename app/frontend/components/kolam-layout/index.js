@@ -14,7 +14,6 @@ const KolamLayoutComponent = props => {
             cache: 'no-store'
         })
             .then(async res => {
-                debugger
                 const message = await res.json();
                 if (!message?.data?.tarikh) {
                     navigate.push('/')

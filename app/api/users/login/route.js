@@ -41,6 +41,12 @@ export async function POST(req) {
                     expiresIn: '48h'
                 });
             cookies().set('token', token)
+
+            // cookies().set('token', token, {
+            //     httpOnly: process.env.NODE_ENV === 'production',
+            //     secure: process.env.NODE_ENV === 'production',
+            //     sameSite: process.env.NODE_ENV === 'production' ? 'Strict' : 'None',
+            // })
             return NextResponse.json({ message: 'Successful' });
         } else {
             return NextResponse.json({ error: 'Invalid username or password.' }, { status: 500 });
