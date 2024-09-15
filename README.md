@@ -12,11 +12,11 @@ npx prisma db seed
 ## Deploy on app service
 
 #deployment scripts
-#docker build -f Dockerfile -t kolam-mat-sen .   
-#docker tag kolam-mat-sen kolammatsenacr.azurecr.io/kolam-mat-sen
-#docker push kolammatsenacr.azurecr.io/kolam-mat-sen
-#az acr login -n kolammatsenacr
-acr username kolammatsenacr
+#docker build -f Dockerfile -t dev-kolam-mat-sen .   
+#docker tag dev-kolam-mat-sen devkolammatsenacr.azurecr.io/dev-kolam-mat-sen
+#docker push devkolammatsenacr.azurecr.io/dev-kolam-mat-sen
+#az acr login -n devkolammatsenacr
+acr username devkolammatsenacr
 acr password aNV4VKhtepkCu0W+sAPmd1gYBTf6/OjgoI8Y6hCOCy+ACRCXCiNI
-docker build --platform=linux/amd64 -t kolam-mat-sen . 
-docker build --no-cache --platform=linux/amd64 -t kolam-mat-sen .
+docker build --platform=linux/amd64 -t dev-kolam-mat-sen . 
+docker build --no-cache --platform=linux/amd64 -t dev-kolam-mat-sen .
