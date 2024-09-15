@@ -501,6 +501,9 @@ export function LoginComponent() {
                         <Grid item xs={12} display={'flex'} justifyContent={'center'} textAlign={'center'} alignItems={'center'}>
                             <Grid container justifyContent={'center'} textAlign={'center'}>
                                 <Grid item xs="auto">
+                                    <SocialIcon network='whatsapp' url='https://wa.link/rs4wq0' />
+                                </Grid>
+                                <Grid item xs="auto">
                                     <SocialIcon network='facebook' url='https://www.facebook.com/profile.php?id=61563728548244&mibextid=JRoKGi' />
                                 </Grid>
                                 <Grid item xs="auto">
