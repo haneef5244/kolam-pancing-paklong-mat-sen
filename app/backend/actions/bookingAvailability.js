@@ -15,6 +15,7 @@ export const getAvailabilityByKolamAndTarikh = async (kolamId, tarikh) => {
                     'value': true,
                     'is_left': true,
                     'is_right': true,
+                    'is_available': true,
                 }
             },
             'is_available': true,
