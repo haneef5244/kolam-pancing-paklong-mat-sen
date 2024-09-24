@@ -1,21 +1,19 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import './index.css'; // Import your CSS file for styling
-import { Alert, Avatar, Button, Card, CardActions, CardContent, CardHeader, CardMedia, Chip, Container, Divider, Fab, Grid, Snackbar, Typography, useMediaQuery, useTheme } from '@mui/material';
-import { Add, ArrowRight, DoubleArrowOutlined, Info, Phishing } from '@mui/icons-material';
+import { Alert, Button, Card, CardContent, Chip, Container, Dialog, DialogContent, Divider, Grid, IconButton, Snackbar, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Add, CloseOutlined, DoubleArrowOutlined, Info } from '@mui/icons-material';
 import { cyan, green, grey, red } from '@mui/material/colors';
 import Lottie from 'react-lottie';
-import IkanBerenang from '@/app/frontend/lotties/fish.json';
 import ScrollDown from '@/app/frontend/lotties/scroll-down.json';
 import AdditonalProducts from '../additional-products';
 import Stepper from '../stepper';
-import { v4 as uuidv4 } from 'uuid';
 import { create } from '../../services/booking';
 import { useRouter } from 'next/navigation';
-import { getBookedPancang } from '../../services/pancang';
-import { FixedSizeList as List } from 'react-window';
 import { LoadingButton } from '@mui/lab';
 import moment from 'moment';
+import DynamicPond from '../dynamicPond';
+import { getDistinctKolamByPancangs } from '@/app/backend/actions/kolam';
 
 
 const KolamComponent = (props) => {
@@ -26,14 +24,18 @@ const KolamComponent = (props) => {
 
     const { kolamId, tarikh } = props;
 
+    const [selectedKolam, setSelectedKolam] = useState(kolamId);
     const [loadKolam, setLoadKolam] = useState(true);
     const [left, setLeft] = useState([]);
     const [right, setRight] = useState([]);
+    const [selectedKolamLabel, setSelectedKolamLabel] = useState([]);
 
     const [bookedSlots, setBookedSlots] = useState([]);
     const [total, setTotal] = useState(0);
     const [snackbarProps, setSnackbarProps] = useState({});
     const [loadingButton, setLoadingButton] = useState(false);
+    const [openPancangDialog, setOpenPancangDialog] = useState(false);
+
     const [additionalProducts, setAdditionalProducts] = useState([
         {
             name: 'Air Mineral',
@@ -46,7 +48,7 @@ const KolamComponent = (props) => {
     const [reservedPancangs, setReservedPancangs] = useState({});
 
     const refreshData = async () => {
-        fetch(`/api/booking/availability/by-date-and-kolam?date=${tarikh}&kolam=${Number(kolamId)}`, {
+        fetch(`/api/booking/availability/by-date-and-kolam?date=${tarikh}&kolam=${Number(selectedKolam)}`, {
             cache: 'no-store'
         })
             .then(async res => {
@@ -76,32 +78,37 @@ const KolamComponent = (props) => {
             })
     }
 
+    const refreshKolamSelectedLabel = (latestSlots) => {
+        getDistinctKolamByPancangs(latestSlots).then(res => {
+            setSelectedKolamLabel(JSON.parse(res).map(res => res?.kolam_id))
+        })
+    }
+
     useEffect(() => {
         if (moment(tarikh).startOf('day').isSameOrAfter(moment().startOf('day'))
             && moment(tarikh).isValid()
-            && kolamId) {
+            && selectedKolam) {
             refreshData();
         } else {
             navigate.push('/')
         }
-
-        // getBookedPancang(kolamId, tarikh).then(async res => {
-        //     const jsonResp = await res.json();
-        //     setReservedPancangs(jsonResp?.data);
-        //     setLoadKolam(false);
-        // })
-    }, [])
+    }, [selectedKolam])
     const handleBookSlot = (slotId) => {
         if (reservedPancangs[slotId]) {
             return;
         }
         if (bookedSlots.includes(slotId)) {
-            setBookedSlots(bookedSlots.filter(id => id !== slotId));
+            let newBookedSlots = bookedSlots.filter(id => id !== slotId)
+            setBookedSlots(newBookedSlots);
+            refreshKolamSelectedLabel(newBookedSlots)
             setTotal(total - 90)
         } else {
-            setBookedSlots([...bookedSlots, slotId]);
+            let newBookedSlots = [...bookedSlots, slotId]
+            setBookedSlots(newBookedSlots);
+            refreshKolamSelectedLabel(newBookedSlots)
             setTotal(total + 90)
         }
+
     };
 
     const renderButtons = (buttons) => {
@@ -125,6 +132,15 @@ const KolamComponent = (props) => {
             </Grid>)}
         </Grid>
     };
+
+    const handleChangeKolam = kolam => {
+        let div = document.getElementById('scroll-on-select-pond');
+        div?.scrollIntoView({
+            behavior: 'smooth'
+        })
+        setOpenPancangDialog(false);
+        setSelectedKolam(kolam);
+    }
 
     const handleCreateBooking = async () => {
         if (!bookedSlots?.length) {
@@ -190,10 +206,10 @@ const KolamComponent = (props) => {
             if (i.quantity) {
                 comp.push(<Grid container>
                     <Grid item xs={6}>
-                        <Typography>{i.name} x {i.quantity}</Typography>
+                        <Typography fontSize={13}>{i.name} x {i.quantity}</Typography>
                     </Grid>
                     <Grid item xs={6} display={'flex'} justifyContent={'end'}>
-                        <Typography fontWeight={'bold'}>RM {i.price * i.quantity}</Typography>
+                        <Typography fontSize={13} fontWeight={'bold'}>RM {i.price * i.quantity}</Typography>
                     </Grid>
                 </Grid>)
             }
@@ -211,39 +227,43 @@ const KolamComponent = (props) => {
                     <Stepper activeIndex={2} />
                 </Grid>
                 <Grid item xs={12}>
-                    <Typography variant='h6'>
+                    <div id="scroll-on-select-pond"></div>
+
+                </Grid>
+                <Grid item xs={12} pb={1}>
+                    <Typography variant='h7'>
                         Pilih pancang anda
                     </Typography>
                 </Grid>
                 <Grid item xs={12}>
                     <Grid container columnSpacing={2}>
                         <Grid item xs={'auto'}>
-                            <Grid container columnSpacing={1}>
+                            <Grid container columnSpacing={1} display={'flex'} alignItems={'center'}>
                                 <Grid item xs='auto'>
                                     <div style={{ width: 20, height: 20, borderRadius: 5, backgroundColor: green[600] }}></div>
                                 </Grid>
                                 <Grid item xs='auto'>
-                                    <Typography fontWeight={600}>Masih Terbuka</Typography>
+                                    <Typography fontSize={12} fontWeight={600}>Masih Terbuka</Typography>
                                 </Grid>
                             </Grid>
                         </Grid>
                         <Grid item xs={'auto'}>
-                            <Grid container columnSpacing={1}>
+                            <Grid container columnSpacing={1} display={'flex'} alignItems={'center'}>
                                 <Grid item xs='auto'>
                                     <div style={{ width: 20, height: 20, borderRadius: 5, backgroundColor: red[600] }}></div>
                                 </Grid>
                                 <Grid item xs='auto'>
-                                    <Typography fontWeight={600}>Sudah Diambil</Typography>
+                                    <Typography fontSize={12} fontWeight={600}>Sudah Diambil</Typography>
                                 </Grid>
                             </Grid>
                         </Grid>
                         <Grid item xs={'auto'}>
-                            <Grid container columnSpacing={1}>
+                            <Grid container columnSpacing={1} display={'flex'} alignItems={'center'}>
                                 <Grid item xs='auto'>
                                     <div style={{ width: 20, height: 20, borderRadius: 5, backgroundColor: grey[600] }}></div>
                                 </Grid>
                                 <Grid item xs='auto'>
-                                    <Typography fontWeight={600}>Anda Memilih</Typography>
+                                    <Typography fontSize={12} fontWeight={600}>Anda Memilih</Typography>
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -257,7 +277,7 @@ const KolamComponent = (props) => {
                                     <Info sx={{ color: '#ffffff', display: 'flex', }} />
                                 </Grid>
                                 <Grid item xs='auto'>
-                                    <Typography variant='caption' color={'#ffffff'}>Klik pada kotak hijau untuk pilih slot anda</Typography>
+                                    <Typography variant='caption' color={'#ffffff'}>Klik pada kotak hijau untuk pilih pancang anda</Typography>
                                 </Grid>
                             </Grid>
                         </CardContent>
@@ -269,8 +289,8 @@ const KolamComponent = (props) => {
                         <Grid item xs={12} md={7} mt={3}
                             sx={{
                                 height: {
-                                    xs: '40vh',
-                                    md: '70vh'
+                                    xs: '50vh',
+                                    md: '80vh'
                                 },
                                 overflowY: {
                                     xs: 'scroll !important',
@@ -319,15 +339,15 @@ const KolamComponent = (props) => {
                                 }
                             }}>
                             <Grid container rowSpacing={1} >
-                                <Grid item xs={12} sx={{ display: { xs: 'none', md: 'block' } }}>
+                                <Grid item xs={12} sx={{ display: { xs: 'none', md: 'block' } }} >
                                     <Card sx={{ backgroundColor: cyan[800], borderRadius: '10px', border: `1px solid ${cyan[600]}` }}>
                                         <CardContent sx={{ paddingBottom: '16px !important' }}>
                                             <Grid container columnSpacing={1} alignItems={'center'}>
                                                 <Grid item xs='auto' alignItems={'center'}>
                                                     <Info sx={{ color: '#ffffff', display: 'flex', }} />
                                                 </Grid>
-                                                <Grid item xs='auto'>
-                                                    <Typography variant='caption' color={'#ffffff'}>Klik pada kotak hijau untuk pilih slot anda</Typography>
+                                                <Grid item xs='auto' >
+                                                    <Typography variant='caption' color={'#ffffff'}>Klik pada kotak hijau untuk pilih pancang anda</Typography>
                                                 </Grid>
                                             </Grid>
                                         </CardContent>
@@ -338,15 +358,15 @@ const KolamComponent = (props) => {
                                         <CardContent>
                                             <Grid container columnSpacing={1} alignItems={'center'} rowSpacing={1}>
                                                 <Grid item xs={12}>
-                                                    <Typography fontWeight={'bold'} sx={{ color: cyan[600] }}>Pancang yang anda pilih:</Typography>
+                                                    <Typography fontSize={12} fontWeight={'bold'} sx={{ color: cyan[600] }}>Pancang yang anda pilih:</Typography>
                                                 </Grid>
                                                 {bookedSlots.map(b => <Grid item>
-                                                    <Chip variant='filled' sx={{ background: green[600], color: '#ffffff' }} label={<Typography fontWeight={'bold'}>{b}</Typography>} />
+                                                    <Chip variant='filled' sx={{ background: green[600], color: '#ffffff' }} label={<Typography fontSize={12} fontWeight={'bold'}>{b}</Typography>} />
                                                 </Grid>)}
                                                 <Grid item xs={12}>
                                                     <Grid container>
                                                         <Grid item xs={12}>
-                                                            <Typography fontWeight={'bold'} sx={{ color: cyan[600] }}>Add-Ons:</Typography>
+                                                            <Typography fontSize={12} fontWeight={'bold'} sx={{ color: cyan[600] }}>Add-Ons:</Typography>
                                                         </Grid>
                                                         <AdditonalProducts handleClickAdditionalProducts={handleClickAdditionalProducts} swiper={additionalProducts} />
                                                     </Grid>
@@ -355,27 +375,27 @@ const KolamComponent = (props) => {
                                                 {bookedSlots.length > 0 ? <Grid item xs={12}>
                                                     <Grid container>
                                                         <Grid item xs={12}>
-                                                            <Typography fontWeight={'bold'} sx={{ color: cyan[600] }}>Ringkasan pembelian:</Typography>
+                                                            <Typography fontSize={13} fontWeight={'bold'} sx={{ color: cyan[600] }}>Ringkasan pembelian:</Typography>
                                                         </Grid>
                                                     </Grid>
                                                     <Grid container>
                                                         <Grid item xs={6}>
-                                                            <Typography>
+                                                            <Typography fontSize={13}>
                                                                 Lokasi
                                                             </Typography>
                                                         </Grid>
                                                         <Grid item xs={6} display={'flex'} justifyContent={'end'}>
-                                                            <Typography>
-                                                                Kolam {kolamId}
+                                                            <Typography fontSize={13}>
+                                                                Kolam {selectedKolamLabel?.map(e => e).join(', ')}
                                                             </Typography>
                                                         </Grid>
                                                         <Grid item xs={6}>
-                                                            <Typography>
+                                                            <Typography fontSize={13}>
                                                                 Pancang x {bookedSlots.length}
                                                             </Typography>
                                                         </Grid>
                                                         <Grid item xs={6} display={'flex'} justifyContent={'end'}>
-                                                            <Typography fontWeight={'bold'}>
+                                                            <Typography fontWeight={'bold'} fontSize={13}>
                                                                 RM {bookedSlots.length * 90}
                                                             </Typography>
                                                         </Grid>
@@ -414,8 +434,25 @@ const KolamComponent = (props) => {
                                                             }
                                                         }}
                                                     >
-                                                        <Typography fontWeight={'bold'} textTransform={'capitalize'}>Seterusnya</Typography>
+                                                        <Typography fontSize={12} fontWeight={'bold'} textTransform={'capitalize'}>Seterusnya</Typography>
                                                     </LoadingButton>
+                                                </Grid>
+                                                <Grid item xs="12">
+                                                    <Button variant='outlined'
+                                                        onClick={() => setOpenPancangDialog(true)}
+                                                        startIcon={<Add />}
+                                                        sx={{
+                                                            padding: '10px 20px',
+                                                            borderRadius: '10px',
+                                                            color: cyan[800],
+                                                            ':hover': {
+                                                                background: grey[100],
+                                                                border: `1px solid ${cyan[700]}`
+                                                            },
+                                                            border: `1px solid ${cyan[700]}`
+                                                        }}>
+                                                        <Typography fontSize={12} textTransform={'capitalize'}>Ingin tambah pancang dari kolam lain?</Typography>
+                                                    </Button>
                                                 </Grid>
                                             </Grid>
                                         </CardContent>
@@ -425,7 +462,29 @@ const KolamComponent = (props) => {
                         </Grid>
                     </Grid>
                 </Grid>
-            </Grid >
+            </Grid>
+            <Dialog open={openPancangDialog} onClose={() => setOpenPancangDialog(false)}>
+                <IconButton
+                    aria-label="close"
+                    onClick={() => setOpenPancangDialog(false)}
+                    sx={(theme) => ({
+                        position: 'absolute',
+                        right: 8,
+                        top: 8,
+                        color: theme.palette.grey[500],
+                        zIndex: 999
+                    })}
+                >
+                    <CloseOutlined />
+                </IconButton>
+                <DialogContent>
+                    <Grid container rowSpacing={1} >
+                        <Grid item xs={12}>
+                            <DynamicPond handleClickPond={handleChangeKolam} pond={selectedKolam} />
+                        </Grid>
+                    </Grid>
+                </DialogContent>
+            </Dialog>
             <Snackbar
                 open={snackbarProps?.open}
                 autoHideDuration={6000}

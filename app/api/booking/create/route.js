@@ -51,8 +51,10 @@ export async function POST(req) {
                     'pancang': {
                         select: {
                             'value': true,
+                            'id': true,
                         }
-                    }
+                    },
+                    'kolam_id': true,
                 }
             })
             if (unavailableSlots?.length) {
@@ -65,14 +67,34 @@ export async function POST(req) {
                     quantity: addOns?.airMineral
                 })
             }
+            const slots = await prisma.booking_availability.findMany({
+                where: {
+                    tarikh: tarikhPancing,
+                    is_available: true,
+                    pancang: {
+                        'value': {
+                            in: pancang
+                        }
+                    }
+                },
+                select: {
+                    'pancang': {
+                        select: {
+                            'value': true,
+                            'id': true,
+                        }
+                    },
+                    'kolam_id': true,
+                }
+            })
 
             const resp = await prisma.kolam_booking.create({
                 data: {
-                    kolam_id,
-                    pancangs: {
+                    kolam_booking_kolams: {
                         createMany: {
-                            data: pancang.map(e => ({
-                                nombor: e
+                            data: slots.map(e => ({
+                                kolam_id: Number(e?.kolam_id),
+                                kolam_booking_pancang_id: Number(e?.pancang?.id)
                             }))
                         }
                     },

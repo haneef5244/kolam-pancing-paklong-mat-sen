@@ -32,14 +32,13 @@ export async function POST(req) {
                 user_id: userId,
             },
             select: {
-                'pancangs': {
-                    select: {
-                        'nombor': true,
-                        'id': true
+                'kolam_booking_kolams': {
+                    'select': {
+                        'kolam_id': true,
+                        'kolam_booking_pancang': true,
                     }
                 },
                 'id': true,
-                'kolam_id': true,
                 'tarikh': true,
                 'amount': true,
                 'user_id': true,
@@ -50,20 +49,26 @@ export async function POST(req) {
         if (booking?.id) {
             try {
                 const toyyibPayUrl = await prisma.$transaction(async txn => {
-                    const pancangValues = booking?.pancangs?.map(e => e?.nombor)
                     const tarikh = booking.tarikh;
 
                     const bookingAvailabilityLock = await txn.$executeRaw`
                     SELECT * from booking_availability AS ba
                     JOIN pancang AS p
                         ON ba.pancang_id = p.id
-                    WHERE p.value in (${Prisma.join(pancangValues)})
-                        and ba.kolam_id = ${booking?.kolam_id}
-                        and ba.tarikh = ${tarikh}
-                        and ba.is_available = true
+                    WHERE 
+                        ${Prisma.join(
+                        booking?.kolam_booking_kolams?.map(e => Prisma.sql`(
+                                p.value = ${e?.kolam_booking_pancang?.value}
+                                AND ba.kolam_id = ${e?.kolam_id}
+                                and ba.tarikh = ${tarikh}
+                                and ba.is_available = true
+                            )`
+                        ),
+                        ' OR '
+                    )}
                     FOR UPDATE`;
 
-                    if (bookingAvailabilityLock == booking?.pancangs?.length) {
+                    if (bookingAvailabilityLock == booking?.kolam_booking_kolams?.length) {
                         const malaysiaTime = momenttz.tz("Asia/Kuala_Lumpur");
                         const expiryDate = malaysiaTime.add(15, 'minutes');
                         const toyyibPayResp = await fetch(`${process.env.TOYYIB_PAY_BASE_URL}${process.env.TOYYIB_PAY_CREATE_BILL_URL}`, {
@@ -97,7 +102,6 @@ export async function POST(req) {
                         await txn.kolam_booking.update({
                             where: {
                                 id: Number(booking?.id),
-                                kolam_id: Number(booking?.kolam_id) || null,
                                 is_deleted: false,
                             },
                             data: {
@@ -119,18 +123,15 @@ export async function POST(req) {
                                 },
                                 'amount': true,
                                 'add_ons': true,
-                                'pancangs': true,
                                 'tarikh': true,
                             }
                         })
                         const updatedBookingAvailability = await txn.booking_availability.updateMany({
                             where: {
-                                pancang: {
-                                    value: {
-                                        in: booking?.pancangs?.map(e => e?.nombor)
-                                    }
-                                },
-                                kolam_id: Number(booking?.kolam_id),
+                                OR: booking?.kolam_booking_kolams?.map(e => ({
+                                    pancang_id: Number(e?.kolam_booking_pancang?.id),
+                                    kolam_id: Number(e?.kolam_id)
+                                })),
                                 tarikh: booking?.tarikh
                             },
                             data: {

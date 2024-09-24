@@ -4,7 +4,6 @@ import { grey } from '@mui/material/colors';
 import { useRouter } from 'next/navigation';
 import { queue } from '../../services/booking';
 import React, { useEffect, useState } from 'react';
-import { w3cwebsocket as W3CWebSocket } from "websocket";
 import Stepper from '../stepper';
 import { LoadingButton } from '@mui/lab';
 
@@ -33,14 +32,15 @@ export const BookingComponent = props => {
         fetch(`/api/booking?id=${bookingId}`, {
             cache: 'no-store'
         }).then(async res => {
-            const message = await res.json();
+            const message = await res.json()
+            debugger
             if (!message?.data) {
                 navigate.push('/');
             } else {
                 const header = document.getElementById('header');
                 setHeaderHeight(header?.scrollHeight);
                 let totalCost = 0
-                for (let p of message?.data?.pancangs) {
+                for (let p of message?.data?.kolam_booking_kolams) {
                     totalCost += 90
                 }
                 for (let ao of message?.data?.add_ons) {
@@ -98,12 +98,12 @@ export const BookingComponent = props => {
                                     <Grid item xs={9}>
                                         <Grid container>
                                             <Grid item xs={12}>
-                                                <Typography>Pancang x {data?.pancangs?.length}</Typography>
+                                                <Typography>Pancang x {data?.kolam_booking_kolams?.length}</Typography>
                                             </Grid>
                                             <Grid item xs={12}>
                                                 <Grid container rowSpacing={1} columnSpacing={1}>
-                                                    {data?.pancangs?.map(e => <Grid item xs='auto'>
-                                                        <Chip label={e?.nombor} />
+                                                    {data?.kolam_booking_kolams?.map(e => <Grid item xs='auto'>
+                                                        <Chip label={e?.kolam_booking_pancang?.value} />
                                                     </Grid>)}
                                                 </Grid>
                                             </Grid>
@@ -111,7 +111,7 @@ export const BookingComponent = props => {
                                     </Grid>
                                     <Grid item xs={3} >
                                         <Typography fontWeight={'bold'}>
-                                            RM {data?.pancangs?.length * 90}
+                                            RM {data?.kolam_booking_kolams?.length * 90}
                                         </Typography>
                                     </Grid>
                                 </Grid>

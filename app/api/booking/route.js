@@ -42,7 +42,19 @@ export async function getBooking(id) {
             },
             select: {
                 'id': true,
-                'pancangs': true,
+                'kolam_booking_kolams': {
+                    select: {
+                        'kolam_booking_pancang': {
+                            select: {
+                                'value': true,
+                                'id': true,
+                            },
+                        }
+                    },
+                    where: {
+                        is_deleted: false
+                    }
+                },
                 'add_ons': true,
                 'tarikh': true,
             }

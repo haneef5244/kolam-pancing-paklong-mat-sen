@@ -8,7 +8,7 @@ export const getBookingAvailability = async () => {
         let dates = await prisma.booking_availability.findMany({
             where: {
                 tarikh: {
-                    gte: moment().startOf('day')
+                    gte: moment().startOf('day').toISOString()
                 },
             },
             distinct: ['tarikh'],
