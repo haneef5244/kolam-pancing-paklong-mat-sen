@@ -25,13 +25,21 @@ export const getUserBookings = async () => {
             user_id: decodedToken.id || null,
             payment_status: {
                 in: ['PAID', 'PENDING', 'CANCELLED']
-            }
+            },
+            is_deleted: false,
         },
         select: {
-            'kolam_id': true,
-            'pancangs': {
-                select: {
-                    'nombor': true
+            'kolam_booking_kolams': {
+                'select': {
+                    'kolam_booking_pancang': {
+                        'select': {
+                            'value': true,
+                        }
+                    },
+                    'kolam_id': true,
+                },
+                where: {
+                    'is_deleted': false
                 }
             },
             'tarikh': true,

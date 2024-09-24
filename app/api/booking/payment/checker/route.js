@@ -14,9 +14,20 @@ export async function GET(req) {
         },
         select: {
             'id': true,
-            'pancangs': true,
+            'kolam_booking_kolams': {
+                select: {
+                    'kolam_booking_pancang': {
+                        'select': {
+                            'value': true,
+                        }
+                    },
+                    'kolam_id': true,
+                },
+                where: {
+                    is_deleted: false
+                }
+            },
             'tarikh': true,
-            'kolam_id': true,
             'created_on': true,
         }
     })
@@ -33,24 +44,22 @@ export async function GET(req) {
     })
     let nombors = []
     for (let i of dueBills) {
-        for (let x of i?.pancangs) {
-            nombors.push(x.nombor)
+        for (let x of i?.kolam_booking_kolams) {
+            nombors.push(x?.kolam_booking_pancang?.value)
         }
     }
     const updatedBookingAvailabilities = await prisma.booking_availability.updateMany({
         where: {
-            kolam_id: {
-                in: dueBills?.map(e => Number(e?.kolam_id)),
-            },
-            tarikh: {
-                in: dueBills?.map(e => new Date(e?.tarikh)),
-            },
-            is_available: false,
-            pancang: {
-                value: {
-                    in: nombors
-                }
-            }
+            OR: dueBills?.map(e => ({
+                OR: e?.kolam_booking_kolams?.map(s => ({
+                    'kolam_id': Number(s?.kolam_id),
+                    pancang: {
+                        value: s?.kolam_booking_pancang?.value
+                    }
+                })),
+                tarikh: moment(e?.tarikh).toISOString(),
+                is_available: false,
+            }))
         },
         data: {
             is_available: true

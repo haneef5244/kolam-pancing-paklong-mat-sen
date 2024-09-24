@@ -41,7 +41,16 @@ export async function POST(req) {
             },
             select: {
                 'payment_status': true,
-                'kolam_id': true,
+                'kolam_booking_kolams': {
+                    select: {
+                        'kolam_id': true,
+                        'kolam_booking_pancang': {
+                            select: {
+                                'value': true,
+                            }
+                        }
+                    }
+                },
                 'payment': {
                     select: {
                         'status': true,
@@ -61,7 +70,6 @@ export async function POST(req) {
                 },
                 'amount': true,
                 'add_ons': true,
-                'pancangs': true,
                 'tarikh': true,
             }
         });
@@ -81,6 +89,10 @@ export async function POST(req) {
                 }
             })
 
+            const kolamsObj = {}
+            for (let book of booking?.kolam_booking_kolams) {
+                kolamsObj[book.kolam_id] = true;
+            }
             const encryptedData = CryptoJS.AES.encrypt(JSON.stringify({
                 bookingId: Number(body?.order_id),
             }), process.env.QR_SECRET_KEY).toString();
@@ -92,9 +104,9 @@ export async function POST(req) {
 
             paymentInfo.push({
                 item: 'Pancang',
-                bilangan: booking?.pancangs?.length,
-                nota: booking?.pancangs?.map(p => `Pancang ${p?.nombor}`).join(','),
-                amaun: `RM ${booking?.pancangs?.length * 90}`
+                bilangan: booking?.kolam_booking_kolams?.length,
+                nota: booking?.kolam_booking_kolams?.map(p => `Pancang ${p?.kolam_booking_pancang?.value}`).join('<br>'),
+                amaun: `RM ${booking?.kolam_booking_kolams?.length * 90}`
             })
             if (booking?.add_ons?.length) {
                 for (let ao of booking?.add_ons) {
@@ -111,11 +123,11 @@ export async function POST(req) {
                     recipients: {
                         to: [{ address: booking?.user?.email }]
                     },
-                    emailSubject: '[Kolam Pancing Paklong Mat Sen] Booking Berjaya!',
+                    emailSubject: '[Kolam Pancing Paklong Mat Sen] Tempahan Berjaya!',
                     props: {
                         namaPertama: booking?.user?.nama_pertama,
                         tarikhPancing: moment(booking?.tarikh).format('Do MMMM YYYY'),
-                        kolamId: booking?.kolam_id,
+                        kolamId: Object.keys(kolamsObj).map(e => e).join(', '),
                         paymentInfo,
                         qrCodeImage: sasUrl
                     },
@@ -125,13 +137,11 @@ export async function POST(req) {
         } else if (body?.status == 3) {
             await prisma.booking_availability.updateMany({
                 where: {
-                    pancang: {
-                        value: {
-                            in: booking?.pancangs?.map(e => e?.nombor)
-                        }
-                    },
-                    tarikh: new Date(booking?.tarikh),
-                    kolam_id: Number(booking?.kolam_id),
+                    OR: booking?.kolam_booking_kolams?.map(e => ({
+                        pancang: e?.kolam_booking_pancang?.value,
+                        tarikh: new Date(booking?.tarikh),
+                        kolam_id: Number(e?.kolam_id)
+                    }))
                 },
                 data: {
                     is_available: true

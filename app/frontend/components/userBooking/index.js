@@ -13,15 +13,11 @@ const generateHeaders = () => {
         },
         {
             props: {},
-            value: 'Kolam'
-        },
-        {
-            props: {},
             value: 'Tarikh Pancing',
         },
         {
             props: {},
-            value: 'Pancang'
+            value: 'Kolam/Pancang'
         },
         {
             props: {},
@@ -74,14 +70,18 @@ const UserBookingComponent = (props) => {
             if (message?.data) {
                 let newData = [];
                 for (let d of message?.data) {
+                    let kolamObj = {};
+                    for (let b of d?.kolam_booking_kolams) {
+                        if (!kolamObj[b?.kolam_id]) {
+                            kolamObj[b?.kolam_id] = [b?.kolam_booking_pancang?.value];
+                        } else {
+                            kolamObj[b?.kolam_id] = [...kolamObj[b?.kolam_id], b?.kolam_booking_pancang?.value];
+                        }
+                    }
                     let colData = []
                     colData.push({
                         props: {},
                         value: d?.id
-                    })
-                    colData.push({
-                        props: {},
-                        value: d?.kolam_id
                     })
                     colData.push({
                         props: {},
@@ -90,8 +90,17 @@ const UserBookingComponent = (props) => {
                     colData.push({
                         props: {},
                         value: <Grid container columnSpacing={2} rowSpacing={2}>
-                            {d?.pancangs?.map(pancang => <Grid item xs="auto">
-                                <Chip label={pancang?.nombor} />
+                            {Object.keys(kolamObj)?.map(kolam => <Grid item xs={12}>
+                                <Grid container rowSpacing={1}>
+                                    <Grid item xs={12}><Typography fontWeight={'bold'}>Kolam {kolam}</Typography></Grid>
+                                    <Grid item xs="12">
+                                        <Grid container rowSpacing={2} columnSpacing={1}>
+                                            {kolamObj[kolam]?.map(e => <Grid item xs="auto">
+                                                <Chip variant="outlined" label={e} />
+                                            </Grid>)}
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
                             </Grid>)}
                         </Grid>
                     })

@@ -1,9 +1,6 @@
 import KolamComponent from '@/app/frontend/components/kolam';
-import { Phishing } from '@mui/icons-material';
-import { Fab } from '@mui/material';
 import moment from 'moment';
 import React from 'react';
-import { getAvailabilityByKolamAndTarikh } from '../backend/actions/bookingAvailability';
 import { redirect } from 'next/navigation';
 
 const Kolam = async (props) => {
