@@ -47,6 +47,7 @@ export async function POST(req) {
                         'kolam_booking_pancang': {
                             select: {
                                 'value': true,
+                                'id': true,
                             }
                         }
                     }
@@ -138,10 +139,10 @@ export async function POST(req) {
             await prisma.booking_availability.updateMany({
                 where: {
                     OR: booking?.kolam_booking_kolams?.map(e => ({
-                        pancang: e?.kolam_booking_pancang?.value,
+                        pancang_id: Number(e?.kolam_booking_pancang?.id),
+                        kolam_id: Number(e?.kolam_id),
                         tarikh: new Date(booking?.tarikh),
-                        kolam_id: Number(e?.kolam_id)
-                    }))
+                    })),
                 },
                 data: {
                     is_available: true
