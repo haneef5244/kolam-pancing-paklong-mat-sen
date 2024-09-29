@@ -30,3 +30,45 @@ export const getAllPertandingan = async () => {
     }
     return data;
 }
+
+export const getLivePertandingan = async () => {
+    const data = await prisma.pertandingan.findFirst({
+        where: {
+            is_started: true,
+            is_ended: false,
+        },
+        select: {
+            'id': true,
+            'jenis': true,
+            'tarikh': true,
+        }
+    })
+    return data;
+}
+
+export const getPertandinganLog = async (pertandinganId) => {
+    let result = await prisma.pertandingan_audit_log.findMany({
+        where: {
+            pertandingan_id: Number(pertandinganId),
+        },
+        select: {
+            'pancang_value': true,
+            'berat': true,
+            'waktu': true,
+            'timbang': {
+                'select': {
+                    'label': true,
+                }
+            },
+            'id': true
+        },
+        orderBy: [{
+            berat: 'desc'
+        }, {
+            waktu: 'desc'
+        }],
+        'take': 250
+    })
+    result = result?.map((e, no) => ({ ...e, no: no + 1 }))
+    return result;
+}
