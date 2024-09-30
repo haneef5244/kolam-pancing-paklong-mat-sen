@@ -59,13 +59,16 @@ const PertandinganProvider = (props) => {
                     </Grid>
                 </Grid>
             </Alert>
-        </Snackbar> : pathname != '/pertandingan/juara' && latestEndedPertandingan?.id ? <Snackbar sx={{ cursor: 'pointer' }} onClick={() => navigate.push('/pertandingan/juara')} open={true}>
-            <Alert icon={<MilitaryTechOutlined />} sx={{ display: 'flex', alignItems: 'center', bgcolor: red[600] }} variant="filled" >
-                <Grid container>
+        </Snackbar> : pathname != '/pertandingan/juara' && latestEndedPertandingan?.id ? <Snackbar onClose={() => setLatestEndedPertandingan({})} sx={{ cursor: 'pointer' }} open={true}>
+            <Alert onClose={() => setLatestEndedPertandingan({})} icon={<MilitaryTechOutlined />} sx={{ display: 'flex', alignItems: 'center', bgcolor: red[600] }} variant="filled" >
+                <Grid container onClick={() => navigate.push('/pertandingan/juara')}>
                     <Grid item xs={12}>
                         <Typography sx={{ color: red[100] }} fontWeight={'bold'}>
-                            Lihat Juara Pertandingan {latestEndedPertandingan?.jenis} - {moment(latestEndedPertandingan?.tarikh).format('D MMM YYYY')}
+                            Lihat Juara Pertandingan
                         </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                        {latestEndedPertandingan?.jenis} - {moment(latestEndedPertandingan?.tarikh).format('D MMM YYYY')}
                     </Grid>
                 </Grid>
             </Alert>
