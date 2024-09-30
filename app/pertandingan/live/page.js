@@ -7,7 +7,7 @@ const PertandinganLive = async () => {
     const pertandingan = await getLivePertandingan();
 
     if (pertandingan?.id) {
-        const data = await getPertandinganLog(Number(pertandingan?.id))
+        const data = await getPertandinganLog(Number(pertandingan?.id), pertandingan?.jenis)
         return <ViewPertandingan data={data} pertandinganId={Number(pertandingan?.id)} jenisPertandingan={pertandingan?.jenis} tarikhPertandingan={pertandingan?.tarikh} />
     } else {
         return <Container maxWidth={"lg"} sx={{ textAlign: 'center', display: "flex", alignItems: 'center', justifyContent: 'center' }} >
