@@ -36,6 +36,7 @@ export const getLivePertandingan = async () => {
         where: {
             is_started: true,
             is_ended: false,
+            is_deleted: false,
         },
         select: {
             'id': true,
@@ -46,7 +47,26 @@ export const getLivePertandingan = async () => {
     return data;
 }
 
-export const getPertandinganLog = async (pertandinganId) => {
+export const getLatestEndedPertandingan = async () => {
+    const data = await prisma.pertandingan.findFirst({
+        where: {
+            is_started: true,
+            is_ended: true,
+            is_deleted: false,
+        },
+        select: {
+            'id': true,
+            'jenis': true,
+            'tarikh': true
+        },
+        orderBy: {
+            tarikh: 'desc'
+        }
+    })
+    return data;
+}
+
+export const getPertandinganLog = async (pertandinganId, jenisPertandingan) => {
     let result = await prisma.pertandingan_audit_log.findMany({
         where: {
             pertandingan_id: Number(pertandinganId),
@@ -67,8 +87,21 @@ export const getPertandinganLog = async (pertandinganId) => {
         }, {
             waktu: 'desc'
         }],
-        'take': 250
+        'take': 200
     })
-    result = result?.map((e, no) => ({ ...e, no: no + 1 }))
+    let hadiah = await prisma.hadiah_pertandingan.findMany({
+        where: {
+            jenis: jenisPertandingan,
+            is_deleted: false,
+        },
+        select: {
+            'no': true,
+            'hadiah': true,
+        },
+        orderBy: {
+            'no': 'asc'
+        }
+    })
+    result = result?.map((e, no) => ({ ...e, no: no + 1, hadiah: hadiah[no]?.hadiah }))
     return result;
 }
